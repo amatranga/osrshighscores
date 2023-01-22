@@ -4,7 +4,7 @@ const path = require('path');
 const middleware = require('./middleware');
 const routes = require('./routes');
 
-const publicPath = path.resolve(__dirname, '..', 'public');
+const publicPath = path.resolve(__dirname, '..', 'client/build')
 
 const app = express();
 
