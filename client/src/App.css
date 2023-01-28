@@ -7,6 +7,7 @@
   min-height: 100vh;
   max-height: fit-content;
   transition: all .5s;
+  overflow: hidden;
 }
 button {
   color: var(--text-primary);
@@ -14,4 +15,18 @@ button {
   border: 2px var(--text-primary) solid;
   float: right;
   transition: all .5s;
+}
+
+.barchart-container {
+  padding-bottom: 50px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.barchart-container::-webkit-scrollbar {
+  display: none;
 }

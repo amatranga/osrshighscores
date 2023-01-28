@@ -4,8 +4,12 @@ export function playerFilter(player, type) {
   ));
 }
 
-export function calcBarSize(skillsList) {
-  return (30/skillsList.length) * skillsList.length
+export function calcBarSize(skillsList, divisor) {
+  return (30/skillsList.length) * skillsList.length / divisor
+}
+
+export function calcChartWidth(skills, min) {
+  return skills.length > 1 ? skills.length * 60 : min;
 }
 
 export const graphTypes = [
