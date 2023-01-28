@@ -3,11 +3,12 @@ import {
   graphTypes,
   skillSubTypes,
   calcBarSize,
-  playerFilter
+  playerFilter,
+  calcChartWidth,
 } from './Helpers';
 import CustomizedAxisTick from './rechart_components/CustomizedAxisTick';
 import CustomToolTip from './rechart_components/CustomToolTip';
-import { Form } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
 import {
   BarChart,
   Bar,
@@ -37,7 +38,7 @@ function SkillsTable(props) {
     });
 
     setShownSkills(matchingSkills);
-    setBarSize(calcBarSize(matchingSkills));
+    setBarSize(calcBarSize(matchingSkills, 1));
   }, [skillSubType]);
 
   const handleChange = e => {
@@ -53,78 +54,86 @@ function SkillsTable(props) {
 
   return(
     <>
-      <Form>
-        <div className='mb-3'>
-          {graphTypes.map((item, idx) => (
-            <Form.Check
-              id='graphType'
-              key={idx}
-              inline
-              label={item.display}
-              name={item.display}
-              value={item.id}
-              type={item.type}
-              checked={graphType === item.id}
-              onChange={handleChange} />
-          ))}
-        </div>
-        <div className='mb-3'>
-          {skillSubTypes.map((item, idx) => (
-            <Form.Check
-              id='skillSubType'
-              key={idx}
-              inline
-              label={item.display}
-              name={item.display}
-              value={item.id}
-              type={item.type}
-              checked={skillSubType === item.id}
-              onChange={handleChange} />
-          ))}
-        </div>
-      </Form>
+      <Row>
+        <Col>
+          <Form>
+            <div className='mb-3'>
+              {graphTypes.map((item, idx) => (
+                <Form.Check
+                  id='graphType'
+                  key={idx}
+                  label={item.display}
+                  name={item.display}
+                  value={item.id}
+                  type={item.type}
+                  checked={graphType === item.id}
+                  onChange={handleChange} />
+              ))}
+            </div>
+          </Form>
+        </Col>
+        <Col>
+          <Form>
+            <div className='mb-3'>
+              {skillSubTypes.map((item, idx) => (
+                <Form.Check
+                  id='skillSubType'
+                  key={idx}
+                  label={item.display}
+                  name={item.display}
+                  value={item.id}
+                  type={item.type}
+                  checked={skillSubType === item.id}
+                  onChange={handleChange} />
+              ))}
+            </div>
+          </Form>
+        </Col>
+      </Row>
 
-      <ResponsiveContainer aspect={2.5} minWidth={undefined} minHeight={undefined} width="100%">
-        <BarChart
-          data={shownSkills}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 100,
-            bottom: 95
-          }}>
-            <CartesianGrid strokeDasharray='3 3' />
-            <XAxis dataKey='name' tick={<CustomizedAxisTick />} interval={0} />
-            <YAxis />
-            <Tooltip 
-              content={
-                <CustomToolTip 
-                  prefix={graphType === 'level'} 
-                  suffix={graphType==='experience'} 
-                  _label={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
-                />} 
-              cursor={{fill: 'transparent'}} />
-            <Legend verticalAlign='top' wrapperStyle={{position: 'relative'}} />
-            {
-              graphType === 'level' && 
-              <Bar
-                name={graphType.charAt(0).toUpperCase() + graphType.slice(1)}
-                dataKey='level'
-                fill='#8884d8'
-                barSize={barSize}
-              />
-            }
-            {
-              graphType === 'experience' && 
-              <Bar
-                name={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
-                dataKey='experience' 
-                fill='#82ca9d' 
-                barSize={barSize}
-              />
-            }
-          </BarChart>
-      </ResponsiveContainer>
+      <Row className='barchart-container'>
+        <Col>
+          <ResponsiveContainer height={600} minWidth={350} width={calcChartWidth(shownSkills, 350)}>
+            <BarChart
+              data={shownSkills}
+              margin={{
+                top: 5,
+                bottom: 95,
+              }}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' tick={<CustomizedAxisTick />} interval={0} />
+                <YAxis width={120} />
+                <Tooltip 
+                  content={
+                    <CustomToolTip 
+                      prefix={graphType === 'level'} 
+                      suffix={graphType==='experience'} 
+                      _label={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
+                    />} 
+                  cursor={{fill: 'transparent'}} />
+                <Legend verticalAlign='top' wrapperStyle={{position: 'relative'}} />
+                {
+                  graphType === 'level' && 
+                  <Bar
+                    name={graphType.charAt(0).toUpperCase() + graphType.slice(1)}
+                    dataKey='level'
+                    fill='#8884d8'
+                    barSize={barSize}
+                  />
+                }
+                {
+                  graphType === 'experience' && 
+                  <Bar
+                    name={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
+                    dataKey='experience' 
+                    fill='#82ca9d' 
+                    barSize={barSize}
+                  />
+                }
+              </BarChart>
+          </ResponsiveContainer>
+        </Col>
+      </Row>
     </>
   )
 }

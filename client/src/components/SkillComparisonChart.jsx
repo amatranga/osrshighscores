@@ -3,9 +3,10 @@ import {
   graphTypes,
   skillSubTypes,
   calcBarSize,
+  calcChartWidth,
 } from './Helpers';
 import CustomizedAxisTick from './rechart_components/CustomizedAxisTick';
-import { Form } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
 import {
   BarChart,
   Bar,
@@ -33,7 +34,7 @@ function SkillComparionChart(props) {
     ));
 
     setBothPlayerSkills(matchingSkills);
-    setBarSize(calcBarSize(matchingSkills));
+    setBarSize(calcBarSize(matchingSkills, 1.7));
 
   }, [skillSubType]);
 
@@ -54,49 +55,55 @@ function SkillComparionChart(props) {
 
   return(
     <>
-      <Form>
-        <div className='mb-3'>
-          {graphTypes.map((item, idx) => (
-            <Form.Check
-              id='graphType'
-              key={idx}
-              inline
-              label={item.display}
-              name={item.display}
-              value={item.id}
-              type={item.type}
-              checked={graphType === item.id}
-              onChange={handleChange} />
-          ))}
-        </div>
-        <div className='mb-3'>
-          {skillSubTypes.map((item, idx) => (
-            <Form.Check
-              id='skillSubType'
-              key={idx}
-              inline
-              label={item.display}
-              name={item.display}
-              value={item.id}
-              type={item.type}
-              checked={skillSubType === item.id}
-              onChange={handleChange} />
-          ))}
-        </div>
-      </Form>
+      <Row>
+        <Col>
+          <Form>
+            <div className='mb-3'>
+              {graphTypes.map((item, idx) => (
+                <Form.Check
+                  id='graphType'
+                  key={idx}
+                  label={item.display}
+                  name={item.display}
+                  value={item.id}
+                  type={item.type}
+                  checked={graphType === item.id}
+                  onChange={handleChange} />
+              ))}
+            </div>
+          </Form>
+          </Col>
+          <Col>
+          <Form>
+            <div className='mb-3'>
+              {skillSubTypes.map((item, idx) => (
+                <Form.Check
+                  id='skillSubType'
+                  key={idx}
+                  label={item.display}
+                  name={item.display}
+                  value={item.id}
+                  type={item.type}
+                  checked={skillSubType === item.id}
+                  onChange={handleChange} />
+              ))}
+            </div>
+          </Form>
+        </Col>
+      </Row>
 
-      <ResponsiveContainer aspect={2.5} minWidth={undefined} minHeight={undefined} width="100%">
+      <Row className='barchart-container'>
+        <Col>
+        <ResponsiveContainer height={600} minWidth={500} width={calcChartWidth(bothPlayerSkills, 500)}>
           <BarChart
             data={bothPlayerSkills}
             margin={{
               top: 5,
-              right: 30,
-              left: 100,
               bottom: 95,
             }}>
               <CartesianGrid strokeDasharray='3 3' />
               <XAxis dataKey='name' tick={<CustomizedAxisTick />} interval={0} />
-              <YAxis />
+              <YAxis width={120} />
               <Tooltip
                 content={
                   <CustomCompareToolTip 
@@ -115,7 +122,9 @@ function SkillComparionChart(props) {
               {graphType === 'experience' && <Bar name={p1.name} dataKey='player1_xp' fill='#8884d8' barSize={barSize} />}
               {graphType === 'experience' && <Bar name={p2.name} dataKey='player2_xp' fill='#82ca9d' barSize={barSize} />}
             </BarChart>
-      </ResponsiveContainer>
+          </ResponsiveContainer>
+        </Col>
+      </Row>
     </>
   );
 }
