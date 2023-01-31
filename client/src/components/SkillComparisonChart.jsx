@@ -33,6 +33,9 @@ function SkillComparionChart(props) {
       skillSubType === 'all'? allSkills: skill.subType === skillSubType
     ));
 
+    console.log(bothPlayerSkills);
+    console.log('bothPlayerSkills');
+
     setBothPlayerSkills(matchingSkills);
     setBarSize(calcBarSize(matchingSkills, 1.7));
 

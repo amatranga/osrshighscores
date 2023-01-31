@@ -37,22 +37,30 @@ function PlayerLookup(props) {
     <>
       <Form onSubmit={handleSubmit}>
         <Row className="mb-3">
-          <Form.Group as={Col} controlId='formGridName'>
-            <Form.Control onChange={handlePlayerChange} placeholder='Player Name'/>
-          </Form.Group>
-
-          <Form.Group as={Col} controlId='formGridMode'>
-            <Form.Select defaultValue='Select Mode' onChange={handleModeChange}>
-              {MODES.map((mode, idx) => (
-                <option key={idx}>{mode}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <Col>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
+          <Col xs={12} md={5} className='mb-3'>
+            <Form.Group controlId='formGridName'>
+              <Form.Control onChange={handlePlayerChange} placeholder='Player Name'/>
+            </Form.Group>
           </Col>
+          
+          <Col xs={12} md={5} className='mb-3'>
+            <Form.Group controlId='formGridMode'>
+              <Form.Select defaultValue='Select Mode' onChange={handleModeChange}>
+                {MODES.map((mode, idx) => (
+                  <option key={idx}>{mode}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col xs={12} md={2}>
+            <div className='d-grid gap-2'>
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </div>
+          </Col>
+          
         </Row>
       </Form>
     </>
