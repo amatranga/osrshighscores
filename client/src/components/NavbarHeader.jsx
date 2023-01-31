@@ -4,7 +4,7 @@ import { Navbar, Container, Nav, Form, Button } from 'react-bootstrap';
 function NavbarHeader(props) {
   const { theme } = props;
 
-  const handleClick = (e) => {
+  const handleClick = e => {
     props.switchTheme();
   }
 
@@ -17,11 +17,10 @@ function NavbarHeader(props) {
             <Nav className='me-auto'>
               <Nav.Link disabled>A high score comparison tool for Old School Runescape</Nav.Link>
             </Nav>
-            <Form className='d-flex'>
-              <Button variant='link' onClick={handleClick}>
-                Switch to {theme === 'light'? 'Dark': 'Light'} Theme
-              </Button>
-            </Form>
+
+            <Navbar.Text style={{cursor: 'pointer'}} onClick={handleClick}>
+              Switch to {theme === 'light'? 'Dark': 'Light'} Theme
+            </Navbar.Text>
           </Navbar.Collapse>
         </Container>
       </Navbar>
