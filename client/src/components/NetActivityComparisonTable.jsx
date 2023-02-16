@@ -29,8 +29,8 @@ function NetActivityComparisonTable(props) {
   const p2Total = getTotal('count_2');
   const p1EhbTotal = getEhbTotal('count_1', p1EhbRates, bothPlayerActivities);
   const p2EhbTotal = getEhbTotal('count_2', p2EhbRates, bothPlayerActivities);
-  const p1NetEhbTotal = p1EhbTotal - p2EhbTotal;
-  const p2NetEhbTotal = p2EhbTotal - p1EhbTotal;
+  const p1NetEhbTotal = Math.round((p1EhbTotal - p2EhbTotal) * 1000) / 1000;
+  const p2NetEhbTotal = Math.round((p2EhbTotal - p1EhbTotal) * 1000) / 1000;
   const p1TotalColor = p1Total > p2Total? 'green': p1Total < p2Total? 'red': 'blue';
   const p2TotalColor = p2Total > p1Total? 'green': p2Total < p1Total? 'red': 'blue';
   const p1TotalEhbColor = p1EhbTotal > p2EhbTotal? 'green': p1EhbTotal < p2EhbTotal? 'red': 'blue';
