@@ -5,7 +5,7 @@ import { activitySubTypes, tableTypes } from './Helpers';
 import { Form } from 'react-bootstrap';
 
 function ActivityComparisonTable(props) {
-  const { allActivities, players, theme } = props;
+  const { allActivities, players, theme, ehbRates, modes } = props;
   const { p1, p2 } = players;
 
   const [activitySubType, setActivitySubType] = useState('all');
@@ -101,6 +101,8 @@ function ActivityComparisonTable(props) {
           p1={p1} p2={p2} 
           theme={theme} 
           bothPlayerActivities={bothPlayerActivities}
+          ehbRates={ehbRates}
+          modes={modes}
         />
       }
       {
@@ -109,6 +111,8 @@ function ActivityComparisonTable(props) {
           p1={p1} p2={p2}
           theme={theme}
           bothPlayerActivities={bothPlayerActivities}
+          ehbRates={ehbRates}
+          modes={modes}
         />
       }
     </>

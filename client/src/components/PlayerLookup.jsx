@@ -15,11 +15,10 @@ function PlayerLookup(props) {
   };
 
   const [player, setPlayer] = useState('');
-  const [mode, setMode] = useState('Select Mode');
 
   const handleModeChange = e => {
     const { value } = e.target;
-    setMode(value);
+    props.changeMode(value, props.playerId);
   };
 
   const handlePlayerChange = e => {
@@ -29,7 +28,7 @@ function PlayerLookup(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const apiMode = MODE_MAP[mode];
+    const apiMode = MODE_MAP[props.mode];
     props.handleSubmit(props.playerId, player, apiMode);
   }
 

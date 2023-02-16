@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { playerFilter, activitySubTypes } from './Helpers';
+import { playerFilter, activitySubTypes, calcEhb, getEhbByActivity } from './Helpers';
 import { Form, Table } from 'react-bootstrap';
 
 function ActivitiesTable(props) {
-  const { player, theme } = props;
+  const { player, theme, ehbRates, mode } = props;
   const activities = playerFilter(player, 'Activity');
 
   const [activitySubType, setActivitySubType] = useState('all');
   const [shownActivity, setShownActivity] = useState(activities);
+  const [ehb, setEhb] = useState({});
+
+  useEffect(() => {
+    const calculatedEhb = calcEhb(ehbRates, mode);
+    setEhb(calculatedEhb);
+  }, [ehbRates, mode]);
 
   useEffect(() => {
     const matchingActivities = activities.filter(activity => {
@@ -56,6 +62,7 @@ function ActivitiesTable(props) {
           <tr>
             <th>Activity</th>
             <th>Count</th>
+            <th>Efficient Hours</th>
             <th>Rank</th>
           </tr>
         </thead>
@@ -64,6 +71,7 @@ function ActivitiesTable(props) {
             <tr key={idx}>
               <td>{activity.name}</td>
               <td>{activity.level === 0 ? '-': activity.level}</td>
+              <td>{getEhbByActivity(activity, ehb)}</td>
               <td>{activity.rank === 0 ? '-': activity.rank}</td>
             </tr>
           ))}
