@@ -66,6 +66,8 @@ function NetActivityComparisonTable(props) {
           const p2EhbCountColor = localP2Ehb > localP1Ehb? 'green': localP2Ehb < localP1Ehb? 'red': 'blue';
           const netRankColor = player1_rank - player2_rank === 0? 'blue': '';
           const rankDiff = Math.abs(player1_rank - player2_rank);
+          const p1EhbDiff = Math.round((localP1Ehb - localP2Ehb) * 1000) / 1000;
+          const p2EhbDiff = Math.round((localP2Ehb - localP1Ehb) * 1000) / 1000;
 
           return(
             <tr key={idx}>
@@ -76,8 +78,8 @@ function NetActivityComparisonTable(props) {
               <td style={{color: p2CountColor}}>
                 {count_2 > 0? '+ ' + count_2: '-'}
               </td>
-              <td style={{color: p1EhbCountColor}}>{localP1Ehb > localP2Ehb? localP1Ehb - localP2Ehb : '-'}</td>
-              <td style={{color: p2EhbCountColor}}>{localP2Ehb > localP1Ehb? localP2Ehb - localP1Ehb: '-'}</td>
+              <td style={{color: p1EhbCountColor}}>{p1EhbDiff > 0? `+ ${p1EhbDiff}`: '-'}</td>
+              <td style={{color: p2EhbCountColor}}>{p2EhbDiff > 0? `+ ${p2EhbDiff}`: '-'}</td>
               <td style={{color:netRankColor}}>
                 {rankDiff === 0 ? '-' : rankDiff}
               </td>

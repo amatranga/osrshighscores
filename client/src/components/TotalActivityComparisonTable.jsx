@@ -117,10 +117,10 @@ function TotalActivityComparisonTable(props) {
         })}
         <tr>
           <td>Total</td>
-          <td style={{color: p1TotalColor}}>{p1Total}</td>
-          <td style={{color: p2TotalColor}}>{p2Total}</td>
-          <td style={{color: p1TotalEhbColor}}>{p1EhbTotal}</td>
-          <td style={{color: p2TotalEhbColor}}>{p2EhbTotal}</td>
+          <td style={{color: p1TotalColor}}>{p1Total > 0? p1Total: '-'}</td>
+          <td style={{color: p2TotalColor}}>{p2Total > 0? p2Total: '-'}</td>
+          <td style={{color: p1TotalEhbColor}}>{p1EhbTotal > 0? p1EhbTotal: '-'}</td>
+          <td style={{color: p2TotalEhbColor}}>{p2EhbTotal > 0? p2EhbTotal: '-'}</td>
         </tr>
       </tbody>
     </Table>
