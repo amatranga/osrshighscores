@@ -8,11 +8,13 @@ import SkillComparionChart from './SkillComparisonChart';
 import ActivityComparisonTable from './ActivityComparisonTable';
 import ErrorModal from './ErrorModal';
 import { playerFilter } from './Helpers';
-import { getHighScoreByMode } from '../API';
+import { getHighScoreByMode, getEhb } from '../API';
 
 function Home(props) {
   const [player1, setPlayer1] = useState([]);
   const [player2, setPlayer2] = useState([]);
+  const [player1Mode, setPlayer1Mode] = useState('Select Mode');
+  const [player2Mode, setPlayer2Mode] = useState('Select Mode');
   const [bothPlayerSkills, setBothPlayerSkills] = useState([]);
   const [bothPlayerActivities, setBothPlayerActivities] = useState([]);
   const [show1, setShow1] = useState(false);
@@ -21,8 +23,21 @@ function Home(props) {
   const [showActivities, setShowActivities] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [ehbRates, setEhbRates] = useState({});
 
   const { theme } = props;
+
+  useEffect(() => {
+    getEhb().then(res => {
+      const { status, data } = res;
+      if (status === 200) {
+        setEhbRates(data);
+      } else {
+        setIsError(true);
+        setErrorMessage(data);
+      }
+    })
+  }, []);
 
   useEffect(() => {
     setShow1(false);
@@ -111,6 +126,14 @@ function Home(props) {
     setErrorMessage(undefined);
   }
 
+  const changeMode = (mode, playerId) => {
+    if (playerId === 1) {
+      setPlayer1Mode(mode);
+    } else {
+      setPlayer2Mode(mode);
+    }
+  }
+
   const handleSubmit = (player, name, mode) => {
     getHighScoreByMode(mode, name).then(res => {
       const { status, data } = res;
@@ -146,7 +169,7 @@ function Home(props) {
           id='uncontrolled-tab'
           className='mb-3'>
             <Tab eventKey='Player 1' title='Player 1'>
-              <PlayerLookup playerId={1} handleSubmit={handleSubmit} />
+              <PlayerLookup playerId={1} handleSubmit={handleSubmit} mode={player1Mode} changeMode={changeMode} />
               <Row className={rowClassName}>
                 <Col>
                   {
@@ -161,14 +184,14 @@ function Home(props) {
                   {
                     player1.length > 0 && 
                     show1 &&
-                    <ActivitiesTable player={player1} theme={theme} />
+                    <ActivitiesTable player={player1} theme={theme} ehbRates={ehbRates} mode={player1Mode} />
                   }
                 </Col>
               </Row>
             </Tab>
             
             <Tab eventKey='Player 2' title='Player 2'>
-              <PlayerLookup playerId={2} handleSubmit={handleSubmit} />
+              <PlayerLookup playerId={2} handleSubmit={handleSubmit} mode={player2Mode} changeMode={changeMode} />
               <Row className={rowClassName}>
                 <Col>
                   {
@@ -183,7 +206,7 @@ function Home(props) {
                   {
                     player2.length > 0 && 
                     show2 &&
-                    <ActivitiesTable player={player2} theme={theme} />
+                    <ActivitiesTable player={player2} theme={theme} ehbRates={ehbRates} mode={player2Mode} />
                   }
                 </Col>
               </Row>
@@ -210,6 +233,8 @@ function Home(props) {
                       allActivities={bothPlayerActivities}
                       players={{p1: playerFilter(player1, 'Info')[0], p2: playerFilter(player2, 'Info')[0]}}
                       theme={theme}
+                      ehbRates={ehbRates}
+                      modes={{player1Mode, player2Mode}}
                     />
                   }
                 </Col>
