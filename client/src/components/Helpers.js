@@ -81,4 +81,5 @@ const modeRateMap = {
   'Deadman': 'ironEhb',
   'Seasonal': 'ironEhb',
   'Tournament': 'ironEhb',
+  'Fresh Start World': 'mainEhb',
 };

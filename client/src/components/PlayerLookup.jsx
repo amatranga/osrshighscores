@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
 function PlayerLookup(props) {
-  const MODES = ['Select Mode', 'Main', 'Ironman', 'Hard Core Ironman', 'Ultimate Ironman', 'Deadman', 'Seasonal', 'Tournament'];
+  const MODES = ['Select Mode', 'Main', 'Ironman', 'Hard Core Ironman', 'Ultimate Ironman', 'Deadman', 'Seasonal', 'Tournament', 'Fresh Start'];
   const MODE_MAP = {
     'Select Mode': 'Main',
     'Main': 'Main',
@@ -12,6 +12,7 @@ function PlayerLookup(props) {
     'Deadman': 'Deadman',
     'Seasonal': 'Seasonal',
     'Tournament': 'Tournament',
+    'Fresh Start': 'FreshStart',
   };
 
   const [player, setPlayer] = useState('');
