@@ -1,19 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { MODE_MAP } from './Helpers';
 
 function PlayerLookup(props) {
-  const MODES = ['Select Mode', 'Main', 'Ironman', 'Hard Core Ironman', 'Ultimate Ironman', 'Deadman', 'Seasonal', 'Tournament', 'Fresh Start'];
-  const MODE_MAP = {
-    'Select Mode': 'Main',
-    'Main': 'Main',
-    'Ironman': 'Iron',
-    'Hard Core Ironman': 'HCIM',
-    'Ultimate Ironman': 'UIM',
-    'Deadman': 'Deadman',
-    'Seasonal': 'Seasonal',
-    'Tournament': 'Tournament',
-    'Fresh Start': 'FreshStart',
-  };
 
   const [player, setPlayer] = useState('');
 
@@ -29,8 +18,8 @@ function PlayerLookup(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const apiMode = MODE_MAP[props.mode];
-    props.handleSubmit(props.playerId, player, apiMode);
+    const { api } = MODE_MAP[props.mode];
+    props.handleSubmit(props.playerId, player, api);
   }
 
   return(
@@ -46,7 +35,7 @@ function PlayerLookup(props) {
           <Col xs={12} md={5} className='mb-3'>
             <Form.Group controlId='formGridMode'>
               <Form.Select defaultValue='Select Mode' onChange={handleModeChange}>
-                {MODES.map((mode, idx) => (
+                {Object.keys(MODE_MAP).map((mode, idx) => (
                   <option key={idx}>{mode}</option>
                 ))}
               </Form.Select>

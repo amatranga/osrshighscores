@@ -14,8 +14,8 @@ export function calcChartWidth(skills, min) {
 
 export function calcEhb(ehbRates, mode) {
   const { miscRates } = ehbRates;
-  const curMode = modeRateMap[mode];
-  const curModeRates = ehbRates[curMode] || {};
+  const { rate } = MODE_MAP[mode];
+  const curModeRates = ehbRates[rate] || {};
 
   for (let key in miscRates) {
     if (!curModeRates.hasOwnProperty(key)) {
@@ -72,14 +72,15 @@ export const tableTypes = [
   {display: 'Net', id: 'net', type: 'radio'},
 ];
 
-const modeRateMap = {
-  'Select Mode': 'mainEhb',
-  'Main': 'mainEhb',
-  'Ironman': 'ironEhb',
-  'Hard Core Ironman': 'ironEhb',
-  'Ultimate Ironman': 'ironEhb',
-  'Deadman': 'ironEhb',
-  'Seasonal': 'ironEhb',
-  'Tournament': 'ironEhb',
-  'Fresh Start World': 'mainEhb',
+export const MODE_MAP = {
+  // Mode_display: { api: 'api_name', rate: 'temple_api_name'}
+  'Select Mode': {api: 'Main', rate: 'mainEhb'},
+  'Main': {api: 'Main', rate: 'mainEhb'},
+  'Ironman': {api: 'Iron', rate: 'ironEhb'},
+  'Hard Core Ironman': {api: 'HCIM', rate: 'ironEhb'},
+  'Ultimate Ironman': {api: 'UIM', rate: 'ironEhb'},
+  'Deadman': {api: 'Deadman', rate: 'ironEhb'},
+  'Seasonal': {api: 'Seasonal', rate: 'ironEhb'},
+  'Tournament': {api: 'Tournament', rate: 'ironEhb'},
+  'Fresh Start': {api: 'FreshStart', rate: 'mainEhb'},
 };
