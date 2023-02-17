@@ -72,6 +72,7 @@ const modeMap = {
   Deadman: 'm=hiscore_oldschool_deadman',
   Seasonal: 'm=hiscore_oldschool_seasonal',
   Tournament: 'm=hiscore_oldschool_tournament',
+  FreshStart: 'm=hiscore_oldschool_fresh_start'
 };
 const BASE_URL = 'https://secure.runescape.com';
 
@@ -276,7 +277,7 @@ router.route('/scores')
         handleScoresResponse(response, res, name, mode);
       })
       .catch(err => {
-        handleScoresError(err, response, res);
+        handleScoresError(err, res);
       });
   });
 
