@@ -5,6 +5,7 @@ import {
   calcBarSize,
   playerFilter,
   calcChartWidth,
+  yAxisTickformatter,
 } from './Helpers';
 import CustomizedAxisTick from './rechart_components/CustomizedAxisTick';
 import CustomToolTip from './rechart_components/CustomToolTip';
@@ -28,7 +29,7 @@ function SkillsTable(props) {
   const [skillSubType, setSkillSubType] = useState('all');
   const [shownSkills, setShownSkills] = useState(skills);
   const [barSize, setBarSize] = useState(1);
-  
+
   useEffect(() => {
     const matchingSkills = skills.filter(skill => {
       if (skillSubType === 'all') {
@@ -50,6 +51,13 @@ function SkillsTable(props) {
     if (id === 'skillSubType') {
       setSkillSubType(value);
     }
+  }
+
+  const handleHorizontalScroll = (e) => {
+    const { scrollLeft } = e.target;
+    
+    const yAxisEle = document.getElementsByClassName('recharts-yAxis')[0];
+    yAxisEle.style = `transform: translateX(${scrollLeft}px)`;
   }
 
   return(
@@ -91,47 +99,47 @@ function SkillsTable(props) {
         </Col>
       </Row>
 
-      <Row className='barchart-container'>
+      <Row className='barchart-container' onScroll={handleHorizontalScroll}>
         <Col>
-          <ResponsiveContainer height={600} minWidth={350} width={calcChartWidth(shownSkills, 350)}>
-            <BarChart
-              data={shownSkills}
-              margin={{
-                top: 5,
-                bottom: 95,
-              }}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='name' tick={<CustomizedAxisTick />} interval={0} />
-                <YAxis width={120} />
-                <Tooltip 
-                  content={
-                    <CustomToolTip 
+            <ResponsiveContainer height={600} minWidth={350} width={calcChartWidth(shownSkills, 350)}>
+              <BarChart
+                data={shownSkills}
+                margin={{
+                  top: 5,
+                  bottom: 95,
+                }}>
+                  <CartesianGrid strokeDasharray='3 3' />
+                  <XAxis dataKey='name' tick={<CustomizedAxisTick />} interval={0} />
+                  <Tooltip 
+                    content={
+                      <CustomToolTip 
                       prefix={graphType === 'level'} 
                       suffix={graphType==='experience'} 
                       _label={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
-                    />} 
-                  cursor={{fill: 'transparent'}} />
-                <Legend verticalAlign='top' wrapperStyle={{position: 'relative'}} />
-                {
-                  graphType === 'level' && 
-                  <Bar
-                    name={graphType.charAt(0).toUpperCase() + graphType.slice(1)}
-                    dataKey='level'
-                    fill='#8884d8'
-                    barSize={barSize}
-                  />
-                }
-                {
-                  graphType === 'experience' && 
-                  <Bar
-                    name={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
-                    dataKey='experience' 
-                    fill='#82ca9d' 
-                    barSize={barSize}
-                  />
-                }
-              </BarChart>
-          </ResponsiveContainer>
+                      />} 
+                    cursor={{fill: 'transparent'}} />
+                  <Legend verticalAlign='top' align='left' wrapperStyle={{ position: 'relative', paddingLeft: '50px' }} />
+                  {
+                    graphType === 'level' && 
+                    <Bar
+                      name={graphType.charAt(0).toUpperCase() + graphType.slice(1)}
+                      dataKey='level'
+                      fill='#8884d8'
+                      barSize={barSize}
+                    />
+                  }
+                  {
+                    graphType === 'experience' && 
+                    <Bar
+                      name={graphType.charAt(0).toUpperCase() + graphType.slice(1)} 
+                      dataKey='experience' 
+                      fill='#82ca9d' 
+                      barSize={barSize}
+                    />
+                  }
+                  <YAxis tickFormatter={yAxisTickformatter} />
+                </BarChart>
+            </ResponsiveContainer>
         </Col>
       </Row>
     </>

@@ -4,6 +4,7 @@ import {
   skillSubTypes,
   calcBarSize,
   calcChartWidth,
+  yAxisTickformatter,
 } from './Helpers';
 import CustomizedAxisTick from './rechart_components/CustomizedAxisTick';
 import { Form, Row, Col } from 'react-bootstrap';
@@ -53,6 +54,13 @@ function SkillComparionChart(props) {
     }
   }
 
+  const handleHorizontalScroll = (e) => {
+    const { scrollLeft } = e.target;
+    
+    const yAxisEle = document.getElementsByClassName('recharts-yAxis')[0];
+    yAxisEle.style = `transform: translateX(${scrollLeft}px)`;
+  }
+
   return(
     <>
       <Row>
@@ -92,7 +100,7 @@ function SkillComparionChart(props) {
         </Col>
       </Row>
 
-      <Row className='barchart-container'>
+      <Row className='barchart-container' onScroll={handleHorizontalScroll}>
         <Col>
         <ResponsiveContainer height={600} minWidth={500} width={calcChartWidth(bothPlayerSkills, 500)}>
           <BarChart
@@ -103,24 +111,56 @@ function SkillComparionChart(props) {
             }}>
               <CartesianGrid strokeDasharray='3 3' />
               <XAxis dataKey='name' tick={<CustomizedAxisTick />} interval={0} />
-              <YAxis width={120} />
               <Tooltip
                 content={
                   <CustomCompareToolTip 
-                    selectedGraph={graphType}
-                    prefix={graphType === 'level'}
-                    suffix={graphType === 'experience'}
-                    _label={graphType.charAt(0).toUpperCase() + graphType.slice(1)}
+                  selectedGraph={graphType}
+                  prefix={graphType === 'level'}
+                  suffix={graphType === 'experience'}
+                  _label={graphType.charAt(0).toUpperCase() + graphType.slice(1)}
                   />
-              }
+                }
                 cursor={{fill: 'transparent'}}
               />
-              <Legend verticalAlign='top' wrapperStyle={{position: 'relative'}} />
-              {graphType === 'level' && <Bar name={p1.name} dataKey='player1_level' fill='#8884d8' barSize={barSize} />}
-              {graphType === 'level' && <Bar name={p2.name} dataKey='player2_level' fill='#82ca9d' barSize={barSize} />}
+              <Legend verticalAlign='top' align='left' wrapperStyle={{ position: 'relative', paddingLeft: '50px' }} />
+              {
+                graphType === 'level' && 
+                <Bar 
+                  name={p1.name} 
+                  dataKey='player1_level' 
+                  fill='#8884d8' 
+                  barSize={barSize}
+                />
+              }
+              {
+                graphType === 'level' && 
+                <Bar 
+                  name={p2.name} 
+                  dataKey='player2_level' 
+                  fill='#82ca9d' 
+                  barSize={barSize} 
+                />
+              }
 
-              {graphType === 'experience' && <Bar name={p1.name} dataKey='player1_xp' fill='#8884d8' barSize={barSize} />}
-              {graphType === 'experience' && <Bar name={p2.name} dataKey='player2_xp' fill='#82ca9d' barSize={barSize} />}
+              {
+                graphType === 'experience' && 
+                <Bar 
+                  name={p1.name} 
+                  dataKey='player1_xp' 
+                  fill='#8884d8' 
+                  barSize={barSize} 
+                />
+              }
+              {
+                graphType === 'experience' && 
+                <Bar 
+                  name={p2.name} 
+                  dataKey='player2_xp' 
+                  fill='#82ca9d' 
+                  barSize={barSize} 
+                />
+              }
+              <YAxis tickFormatter={yAxisTickformatter} />
             </BarChart>
           </ResponsiveContainer>
         </Col>

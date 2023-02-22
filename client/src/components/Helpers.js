@@ -46,6 +46,19 @@ export function getEhbTotal(key, ehbRates, playerActivities) {
   return Math.round(total * 1000) / 1000;
 }
 
+export function yAxisTickformatter(data) {
+  const num = Number(data);
+  if (num > 1000000000) {
+    return (num / 1000000000).toString() + 'B'
+  } else if (num > 1000000) {
+    return (num / 1000000).toString() + 'M'
+  } else if (num > 10000) {
+    return (num / 1000).toString() + 'K'
+  } else {
+    return num.toString();
+  }
+}
+
 export const graphTypes = [
   {display: 'Level Graph', id: 'level', type: 'radio'},
   {display: 'Experience Graph', id: 'experience', type: 'radio'},
