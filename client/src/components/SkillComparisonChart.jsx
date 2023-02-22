@@ -122,7 +122,7 @@ function SkillComparionChart(props) {
                 }
                 cursor={{fill: 'transparent'}}
               />
-              <Legend verticalAlign='top' wrapperStyle={{position: 'relative'}} />
+              <Legend verticalAlign='top' align='left' wrapperStyle={{ position: 'relative', paddingLeft: '50px' }} />
               {
                 graphType === 'level' && 
                 <Bar 
