@@ -14,7 +14,7 @@ const skills = [
 ];
 const activities = [
   "League Points","Bounty Hunter - Hunter","Bounty Hunter - Rogue",
-  "Bounty Hunter (Legacy) - Hunter", "Bounty Hunter (Legacy) - Rogue",
+  "Bounty Hunter (Legacy) - Hunter", "Bounty Hunter (Legacy) - Rogue", "Deadman Mode",
   "Clue Scrolls (all)","Clue Scrolls (beginner)","Clue Scrolls (easy)",
   "Clue Scrolls (medium)","Clue Scrolls (hard)","Clue Scrolls (elite)",
   "Clue Scrolls (master)","LMS - Rank","PvP Arena - Rank",
@@ -41,7 +41,7 @@ const subTypesMap = {
   "Herblore": 'non_combat',"Agility": 'non_combat',"Thieving": 'non_combat',"Slayer": 'non_combat',
   "Farming": 'non_combat',"Runecrafting": 'non_combat',"Hunter": 'non_combat',"Construction": 'non_combat',
   "League Points": 'minigame',"Bounty Hunter - Hunter": 'minigame',"Bounty Hunter - Rogue": 'minigame',
-  "Bounty Hunter (Legacy) - Hunter": 'minigame', "Bounty Hunter (Legacy) - Rogue": 'minigame',
+  "Bounty Hunter (Legacy) - Hunter": 'minigame', "Bounty Hunter (Legacy) - Rogue": 'minigame', "Deadman Mode": 'minigame',
   "LMS - Rank": 'minigame',"PvP Arena - Rank": 'minigame',
   "Soul Wars Zeal": 'minigame',
   "Clue Scrolls (all)": 'clue',"Clue Scrolls (beginner)": 'clue',"Clue Scrolls (easy)": 'clue',
@@ -201,6 +201,8 @@ const cheerioParseMisc = html => {
 
 const handleScoresResponse = (response, res, name, mode) => {
   const { data, status } = response;
+
+  console.log(data)
   
   if (status === 200) {
     const formatted = formatData(data);
