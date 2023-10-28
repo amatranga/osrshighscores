@@ -135,6 +135,7 @@ const cheerioParseMode = html => {
     'Tombs of Amascut Expert': 'Tombs of Amascut: Expert Mode',
     'The Nightmare': 'Nightmare',
     'Vetion': "Vet'ion",
+    'Calvarion': "Cal'varion",
   };
   const otherSkips = [
     'Barrows Chests', 'Bryophyta', 'Crazy Archaeologist',
@@ -201,8 +202,6 @@ const cheerioParseMisc = html => {
 
 const handleScoresResponse = (response, res, name, mode) => {
   const { data, status } = response;
-
-  console.log(data)
   
   if (status === 200) {
     const formatted = formatData(data);
@@ -255,6 +254,8 @@ const handleEhbResponse = (data, res) => {
       miscRates,
     },
   };
+
+  console.log(allData.data);
 
   res.send(JSON.stringify(allData));
 }
