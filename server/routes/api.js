@@ -295,9 +295,4 @@ router.route('/ehb')
       });
   });
 
-router.route('/all_activities')
-  .get((req, res) => {
-    
-  })
-
 module.exports = router;
