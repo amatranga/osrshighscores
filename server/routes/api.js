@@ -25,7 +25,7 @@ const activities = [
   "Dagannoth Prime","Dagannoth Rex","Dagannoth Supreme","Deranged Archaeologist", "Duke Sucellus",
   "General Graardor","Giant Mole","Grotesque Guardians","Hespori","Kalphite Queen",
   "King Black Dragon","Kraken","Kree'Arra","K'ril Tsutsaroth","Mimic","Nex","Nightmare",
-  "Phosani's Nightmare","Obor","Phantom Muspah","Sarachnis","Scorpia","Skotizo", "Spindel", "Tempoross","The Gauntlet",
+  "Phosani's Nightmare","Obor","Phantom Muspah","Sarachnis","Scorpia","Scurrius", "Skotizo", "Spindel", "Tempoross","The Gauntlet",
   "The Corrupted Gauntlet","The Leviathan", "The Whisperer", "Theatre of Blood","Theatre of Blood: Hard Mode",
   "Thermonuclear Smoke Devil","Tombs of Amascut","Tombs of Amascut: Expert Mode",
   "TzKal-Zuk","TzTok-Jad","Vardorvis", "Venenatis","Vet'ion","Vorkath","Wintertodt","Zalcano","Zulrah"
@@ -57,10 +57,10 @@ const subTypesMap = {
   "Commander Zilyana": 'boss',"Corporeal Beast": 'boss',"Crazy Archaeologist": 'boss',
   "Dagannoth Prime": 'boss',"Dagannoth Rex": 'boss',"Dagannoth Supreme": 'boss',
   "Deranged Archaeologist": 'boss', "Duke Sucellus": "boss", "General Graardor": 'boss',"Giant Mole": 'boss',
-  "Grotesque Guardians": 'boss',"Hespori": 'boss',"Kalphite Queen": 'boss', "King Black Dragon": 'boss'
-  ,"Kraken": 'boss',"Kree'Arra": 'boss',"K'ril Tsutsaroth": 'boss', 
+  "Grotesque Guardians": 'boss',"Hespori": 'boss',"Kalphite Queen": 'boss', "King Black Dragon": 'boss',
+  "Kraken": 'boss',"Kree'Arra": 'boss',"K'ril Tsutsaroth": 'boss', 
   "Mimic": 'boss',"Nex": 'boss',"Nightmare": 'boss', "Phosani's Nightmare": 'boss',
-  "Obor": 'boss',"Phantom Muspah": 'boss',"Sarachnis": 'boss',"Scorpia": 'boss',"Skotizo": 'boss', "Spindel": 'boss',
+  "Obor": 'boss',"Phantom Muspah": 'boss',"Sarachnis": 'boss',"Scorpia": 'boss', "Scurrius": "boss","Skotizo": 'boss', "Spindel": 'boss',
   "The Gauntlet": 'boss', "The Corrupted Gauntlet": 'boss', "The Leviathan": 'boss', "The Whisperer": 'boss',
   "Thermonuclear Smoke Devil": 'boss', "TzKal-Zuk": 'boss',"TzTok-Jad": 'boss', "Vardorvis": 'boss',
   "Venenatis": 'boss',"Vet'ion": 'boss', "Vorkath": 'boss',"Zulrah": 'boss'
@@ -146,7 +146,7 @@ const cheerioParseMode = html => {
   const table = $('#comp-table > tbody > tr > td');
   const allModes = [];
   table.each((idx, ele) => {
-    if (idx % 4 === 0 || idx % 4 === 1) {
+    if (idx % 5 === 0 || idx % 5 === 1) {
       allModes.push($(ele).text());
     }
   })
@@ -254,8 +254,6 @@ const handleEhbResponse = (data, res) => {
       miscRates,
     },
   };
-
-  console.log(allData.data);
 
   res.send(JSON.stringify(allData));
 }
