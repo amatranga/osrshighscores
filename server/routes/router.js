@@ -23,6 +23,7 @@ const constructUrl = (mode, name) => {
 
 router.route('/scores')
   .post((req, res) => {
+    console.log('hello from scores!');
     const { mode, name } = req.body;
     const url = constructUrl(mode, name);
     const allData = {
@@ -33,6 +34,7 @@ router.route('/scores')
     axios.get(url)
       .then(response => {
         const { data, status } = response;
+        console.log(data, ' || data');
         if (status === 200) {
           allData.status = status;
           allData.data = data;
