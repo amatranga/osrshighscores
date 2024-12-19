@@ -3,31 +3,29 @@ import {
   Card,
   CardContent,
   Grid2 as Grid,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Paper,
   Typography,
 } from '@mui/material';
 
 const tableCells = [
-  'Skill',
-  'Level',
-  'Experience',
-  'Rank'
+  'Activity',
+  'Score',
+  'Rank',
 ];
 
-const XPTable = ({ skills, userInfo }) => (
-  <Grid size={{ xs: 12 }}>
+const ActivityTable = ({ activities, userInfo }) => (
+  <Grid size={{ xs: 12, md: 6 }}>
     <Card>
       <CardContent>
-        <Typography variant='h6'>Skills for {userInfo.username}</Typography>
-        <TableContainer component={Paper} sx={{ maxHeight: {xs: 300, md: 500 }, overflowX: 'hidden' }}>
+        <Typography variant='h6'>Activities for {userInfo.username}</Typography>
+        <TableContainer component={Paper} sx={{ maxHeight: { xs: 300, md: 500 }, overflowX: 'hidden' }}>
           <Table stickyHeader>
-
             <TableHead>
               <TableRow>
                 {tableCells.map(cell => (
@@ -37,16 +35,14 @@ const XPTable = ({ skills, userInfo }) => (
             </TableHead>
 
             <TableBody>
-              {skills.map(skill => (
-                <TableRow key={skill.id}>
-                  <TableCell>{skill.name}</TableCell>
-                  <TableCell>{skill.level}</TableCell>
-                  <TableCell>{skill.xp.toLocaleString()}</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap', pr: 5 }}>{skill.rank.toLocaleString()}</TableCell>
+              {activities.map(activity => (
+                <TableRow key={activity.id}>
+                  <TableCell>{activity.name}</TableCell>
+                  <TableCell>{activity.score.toLocaleString()}</TableCell>
+                  <TableCell>{activity.rank.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
-
           </Table>
         </TableContainer>
       </CardContent>
@@ -54,4 +50,4 @@ const XPTable = ({ skills, userInfo }) => (
   </Grid>
 );
 
-export default XPTable;
+export default ActivityTable;

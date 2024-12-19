@@ -1,5 +1,4 @@
 const getHighScoreByMode = async(mode, name) => {
-  console.log('getting high scores by mode...');
   const options = {
     method: 'POST',
     body: JSON.stringify({ mode, name }),
@@ -8,7 +7,6 @@ const getHighScoreByMode = async(mode, name) => {
 
   const response = await fetch('/api/scores', options);
   const data = response.json();
-  console.log(data);
   return data;
 };
 

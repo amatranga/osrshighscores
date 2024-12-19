@@ -54,6 +54,7 @@ const SearchBox = ({onClick}) => {
           variant="outlined"
           fullWidth
           onChange={handleChange}
+          autoFocus
         />
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel id="mode-selector-label">Mode</InputLabel>
