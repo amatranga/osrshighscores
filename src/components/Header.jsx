@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { 
   AppBar,
   Box,
@@ -12,19 +12,8 @@ import {
   DarkMode as DarkModeIcon,
   LightMode as LightModeIcon,
 } from '@mui/icons-material';
-import { ThemeContext } from '../contexts/ThemeContext';
 
-const DarkModeToggle = () => {
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
-
-  return (
-    <Button variant="contained" onClick={toggleDarkMode}>
-      {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
-    </Button>
-  );
-};
-
-const Header = () => (
+const Header = ({ darkMode, toggleDarkMode }) => (
   <AppBar position="static">
     <Container maxWidth="xl">
       <Toolbar disableGutters>
@@ -69,7 +58,9 @@ const Header = () => (
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}>
           <Typography variant='p'> A high score comparison tool for Old School Runescape</Typography>
         </Box>
-        <DarkModeToggle />
+        <Button variant="contained" onClick={toggleDarkMode}>
+          {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+        </Button>
       </Toolbar>
     </Container>
   </AppBar>

@@ -1,26 +1,22 @@
-import React, { createContext, useState, useMemo } from 'react';
-import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import React, { createContext, useState, useMemo } from "react";
+import { createTheme, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
-export const ThemeContext = createContext({
-  darkMode: false,
-  toggleDarkMode: () => {},
-});
+const ThemeContext = createContext();
 
-export const ThemeProvider = ({ children }) => {
+const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
     const storedTheme = localStorage.getItem('darkMode');
-    return storedTheme ? JSON.parse(storedTheme) : false;
+    return storedTheme? JSON.parse(storedTheme) : true;
   });
 
-  const toggleDarkMode = () => {
-    setDarkMode((prevMode) => {
-      const newMode = !prevMode;
-      localStorage.setItem('darkMode', JSON.stringify(newMode));
-      return newMode;
-    });
-  };
+  const toggleDarkMode = () => setDarkMode(prevMode => {
+    const newMode = !prevMode;
+    localStorage.setItem('darkMode', JSON.stringify(newMode));
+    return newMode;
+  });
 
+  // Dynamically create the theme based on `darkMode`
   const theme = useMemo(
     () =>
       createTheme({
@@ -40,3 +36,5 @@ export const ThemeProvider = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
+
+export { ThemeContext, ThemeProvider };
