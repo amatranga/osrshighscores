@@ -1,37 +1,24 @@
 import React, { useState } from 'react';
 import {
   Box,
+  Chip,
   Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from '@mui/material';
+import { modeMap } from '../helpers/constants';
 
-const modeMap = {
-  main: { name: 'Main', value: 'main' },
-  iron: { name: 'Ironman', value: 'iron' },
-  hcim: { name: 'Hardcore Ironman', value: 'hcim' },
-  uim: { name: 'Ultimate Ironman', value: 'uim' },
-  deadman: { name: 'Deadman Mode', value: 'deadman' },
-  seasonal: { name: 'Leagues', value: 'seasonal' },
-  tournament: { name: 'Tournament', value: 'tournament' },
-  freshStart: { name: 'Fresh Start', value: 'freshStart' },
-};
-
-
-const SearchBox = ({onClick}) => {
+const SearchBox = ({ findUsers, removePlayer }) => {
   const [user, setUser] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
+  const [players, setPlayers] = useState([]);
 
   const handleChange = e => {
-    const { value } = e.target;
-    if (value && value.trim() !== '') {
-      setUser(value.trim());
-    } else {
-      setUser('');
-    }
+    setUser(e.target.value);
   }
 
   const handleDropdownChange = e => {
@@ -40,16 +27,36 @@ const SearchBox = ({onClick}) => {
     setSelectedMode(selectedMode.value);
   }
 
-  const handleClick = () => {
-    const mode = selectedMode || 'main';
-    const data = { user, mode };
-    onClick(data);
+  const handleAddPlayer = () => {
+    const mode = selectedMode || 'main'
+    if (user) {
+      setPlayers([...players, { user, mode }]);
+      setUser(''); // Clear input field
+      setSelectedMode(''); // Reset mode dropdown
+    }
+  };
+
+  const handleRemovePlayer = (index) => {
+    setPlayers(players.filter((_, i) => i !== index));
+    removePlayer(index);
+  };
+
+  const handleSearch = () => {
+    const trimmedUsers = players.map(player => (
+      {
+        user: player.user.trim(),
+        mode: player.mode
+      }
+    ));
+    findUsers(trimmedUsers);
   }
 
   return (
     <>
+      {/* Large Screen View */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex'}, gap: 2 }}>
         <TextField
+          value={user}
           label="Enter Username"
           variant="outlined"
           fullWidth
@@ -74,45 +81,79 @@ const SearchBox = ({onClick}) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleClick}
+          onClick={handleAddPlayer}
           disabled={user === '' || user.trim() === ''}>
-          Search
+            Add Player
         </Button>
       </Box>
 
       {/* Small Screen View */}
-      <Box sx={{ mb: 4, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
-        <TextField
-          label="Enter Username"
-          variant="outlined"
-          fullWidth
-          onChange={handleChange}
-        />
-      </Box>
-      <Box sx={{ mb: 4, display: { xs: 'flex', md: 'none' }, gap: 2 }}>
-        <FormControl sx={{ minWidth: 200 }} fullWidth>
-          <InputLabel id="mode-selector-label">Mode</InputLabel>
-          <Select
-            labelId="mode-selector-label"
-            value={selectedMode}
-            onChange={handleDropdownChange}
-            label="Mode"
+      <>
+        <Box sx={{ mb: 4, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
+          <TextField
+            label="Enter Username"
+            variant="outlined"
+            fullWidth
+            onChange={handleChange}
+          />
+        </Box>
+        <Box sx={{ mb: 4, display: { xs: 'flex', md: 'none' }, gap: 2 }}>
+          <FormControl sx={{ minWidth: 200 }} fullWidth>
+            <InputLabel id="mode-selector-label">Mode</InputLabel>
+            <Select
+              labelId="mode-selector-label"
+              value={selectedMode}
+              onChange={handleDropdownChange}
+              label="Mode"
+            >
+              {Object.values(modeMap).map(mode => (
+                <MenuItem key={mode.value} value={mode.value}>
+                  {mode.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddPlayer}
+            disabled={user === '' || user.trim() === ''}>
+            Add Player
+          </Button>
+        </Box>
+      </>
+
+      {/* Display added players */}
+      {players.length > 0 && (
+        <>
+          <Box sx={{ mb: 2 }}>
+            <Box>
+              <Typography variant="subtitle1">Players to Compare:</Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                {players.map((player, index) => (
+                  <Chip
+                    key={index}
+                    label={`${player.user} (${modeMap[player.mode]?.name})`}
+                    onDelete={() => handleRemovePlayer(index)}
+                    color="primary"
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Search button */}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleSearch}
+            disabled={players.length === 0}
+            sx={{ mb: 4 }}
           >
-            {Object.values(modeMap).map(mode => (
-              <MenuItem key={mode.value} value={mode.value}>
-                {mode.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleClick}
-        disabled={user === '' || user.trim() === ''}>
-        Search
-      </Button>
-      </Box>
+            Compare
+          </Button>
+        </>
+      )}
     </>
   );
 }

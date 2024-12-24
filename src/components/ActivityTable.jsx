@@ -1,53 +1,145 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   Grid2 as Grid,
+  Paper,
+  Radio,
+  RadioGroup,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
 } from '@mui/material';
+import { ACTIVITY_END_INDEX } from '../helpers/constants';
 
 const tableCells = [
-  'Activity',
-  'Score',
-  'Rank',
+  { name: 'Count', id: 'count' },
+  { name: 'Rank', id: 'rank' },
 ];
 
-const ActivityTable = ({ activities, userInfo }) => (
-  <Grid size={{ xs: 12, md: 6 }}>
-    <Card>
-      <CardContent>
-        <Typography variant='h6'>Activities for {userInfo.username}</Typography>
-        <TableContainer component={Paper} sx={{ maxHeight: { xs: 300, md: 500 }, overflowX: 'hidden' }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                {tableCells.map(cell => (
-                  <TableCell key={cell} sx={{ whiteSpace: 'nowrap' }}>{cell}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+const ActivityTable = ({ players }) => {
+  const [selectedDataPoint, setSelectedDataPoint] = useState('Count');
 
-            <TableBody>
-              {activities.map(activity => (
-                <TableRow key={activity.id}>
-                  <TableCell>{activity.name}</TableCell>
-                  <TableCell>{activity.score.toLocaleString()}</TableCell>
-                  <TableCell>{activity.rank.toLocaleString()}</TableCell>
-                </TableRow>
+  // Extract activity names from the first player
+  const activityNames = players[0].data.activities.slice(0, ACTIVITY_END_INDEX).map(activity => activity.name);
+
+  // Helper function to get max values for each activity
+  const getMaxValues = (activityName) => {
+    const activityStats = players.map(player => {
+      const activity = player.data.activities.slice(0, ACTIVITY_END_INDEX).find(a => a.name === activityName) || {};
+      return {
+        score: activity.score > 0 ? activity.score : 0,
+        rank: activity.rank > 0 ? activity.rank : Number.MAX_VALUE, // Ranks are better when lower
+      };
+    });
+
+    const maxScore = Math.max(...activityStats.map(stat => stat.score));
+    const minRank = Math.min(...activityStats.map(stat => stat.rank));
+
+    return { maxScore, minRank };
+  };
+
+  const handleRadioSelect = e => {
+    setSelectedDataPoint(e.target.value);
+  };
+
+  return (
+    <Grid size={{ xs: 12 }}>
+      <Card>
+        <CardContent>
+        <Typography component='div' variant='h5'>Activities</Typography>
+          <FormControl>
+            <FormLabel id='activity-table-datapoint-selector' />
+            <RadioGroup
+              row
+              aria-labelledby='activity-table-datapoint-selector'
+              name='activity-table-radio-buttons-group'
+              value={selectedDataPoint}
+            >
+              {tableCells.map(cell => (
+                <FormControlLabel
+                  key={cell.id}
+                  value={cell.name}
+                  control={<Radio />}
+                  label={cell.name}
+                  onChange={handleRadioSelect}
+                />
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </CardContent>
-    </Card>
-  </Grid>
-);
+            </RadioGroup>
+          </FormControl>
+          <TableContainer component={Paper} sx={{ maxHeight: { xs: 300, md: 500 }, overflowX: 'scroll' }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Activity</TableCell>
+                  {tableCells.map(label =>
+                    players.map(player => (
+                      label.name === selectedDataPoint && 
+                      <TableCell key={`${player.id}-${label.id}`} sx={{ whiteSpace: 'nowrap' }}>
+                        {player.username} ({label.name})
+                      </TableCell>
+                    ))
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {activityNames.map(activityName => {
+                  const { maxScore, minRank } = getMaxValues(activityName);
+
+                  return (
+                    <TableRow key={activityName}>
+                      <TableCell>{activityName}</TableCell>
+                      {players.map(player => {
+                        const activity = player.data.activities.slice(0, ACTIVITY_END_INDEX).find(a => a.name === activityName) || {};
+                        const isMaxScore = activity.score === maxScore;
+
+                        return (
+                          selectedDataPoint === 'Count' &&
+                          <TableCell
+                            key={`${player.id}-${activityName}-count`}
+                            sx={{
+                              fontWeight: players.length > 1 && isMaxScore ? 'bold' : 'normal',
+                              backgroundColor: players.length > 1 && isMaxScore ? 'rgba(30, 144, 255, 0.3)' : 'inherit',
+                            }}
+                          >
+                            {activity.score && activity.score > 0 ? activity.score.toLocaleString() : '-'}
+                          </TableCell>
+                        );
+                      })}
+                      {players.map(player => {
+                        const activity = player.data.activities.slice(0, ACTIVITY_END_INDEX).find(a => a.name === activityName) || {};
+                        const isMinRank = activity.rank === minRank;
+
+                        return (
+                          selectedDataPoint === 'Rank' && 
+                          <TableCell
+                            key={`${player.id}-${activityName}-rank`}
+                            sx={{
+                              fontWeight: players.length > 1 && isMinRank ? 'bold' : 'normal',
+                              backgroundColor: players.length > 1 && isMinRank ? 'rgba(255, 215, 0, 0.3)' : 'inherit',
+                            }}
+                          >
+                            {activity.rank && activity.rank > 0 ? activity.rank.toLocaleString() : '-'}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
+    </Grid>
+  );
+};
 
 export default ActivityTable;

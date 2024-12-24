@@ -27,11 +27,11 @@ ChartJS.register(
 );
 
 const SkillsChart = ({ data, options }) => (
-  data && <Grid size={12}>
+  <Grid size={12} sx={{ mt: 1 }}>
     <Card>
       <CardContent>
         <Typography variant="subtitle1">
-          Skill Levels Radar Chart
+          Skill Levels Bar Chart
         </Typography>
         <Box
           sx={{
@@ -47,4 +47,4 @@ const SkillsChart = ({ data, options }) => (
   </Grid>
 );
 
-export default SkillsChart
+export default SkillsChart;
