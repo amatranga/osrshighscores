@@ -1,5 +1,6 @@
 import express from 'express';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
@@ -21,42 +22,48 @@ const constructUrl = (mode, name) => {
   return `${BASE_URL}${selectedMode}/${FINAL_URL}${name}`;
 };
 
-router.route('/scores')
-  .post((req, res) => {
-    const { mode, name } = req.body;
-    const url = constructUrl(mode, name);
-    const allData = {
-      status: '',
-      data: '',
-      info: {},
-    };
+router.route('/scores').post(async(requestAnimationFrame, res) => {
+  const { mode, name } = requestAnimationFrame.body;
 
-    axios.get(url)
-      .then(response => {
-        const { data, status } = response;
-        if (status === 200) {
-          allData.status = status;
-          allData.data = data;
-          allData.info = {
-            username: name,
-            mode: mode,
-          };
-          res.send(JSON.stringify(allData));
-        }
-      })
-      .catch(error => {
-        const { status } = error.response;
-        if (status === 404) {
-          allData.status = status;
-          allData.data = 'Player not found. Try a different username or mode';
-        }
-        else {
-          allData.status = 500;
-          allData.data = 'Unknown error encountered';
-        }
+  // Input validation
+  if (!mode || typeof mode !== 'string' || !name || typeof name !== 'string') {
+    return res.status(400).json({
+      status: 400,
+      data: 'Invalid input: "mode" and "name" are required fields and must be strings',
+    });
+  }
 
-        res.send(JSON.stringify(allData));
-      });
-});
+  const url = constructUrl(mode, name);
+
+  try {
+    const response = await axios.get(url);
+    const { data, status } = response;
+    const info = {
+      username: name,
+      mode: mode,
+      id: uuidv4(),
+    }
+
+    if (status === 200) {
+      return res.status(status).json({ status, data, info });
+    }
+  } catch (error) {
+    console.error('Error fetching data from external API: ', error.message);
+
+    if (error.response) {
+      // Handle known Axios errors
+      const { status } = error.response;
+      if (status === 404) {
+        const data = 'Player not found. Try a different username or mode';
+        return res.status(status).json({ status, data });
+      }
+    }
+
+    // Handle unknown errors
+    const status = 500;
+    const data = 'An unknown error occured while fetching data'
+    return res.status(status).json({ status, data });
+  }
+})
 
 export { router };
