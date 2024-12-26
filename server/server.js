@@ -1,8 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import path from 'path';
-import { router } from './routes/index.js';
+// import express from 'express';
+// import cors from 'cors';
+// import bodyParser from 'body-parser';
+// import path from 'path';
+// import { router } from './routes/index.js';
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const path = require('path');
+const router = require('./routes/index.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
