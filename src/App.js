@@ -6,15 +6,15 @@ import {
   Grid2 as Grid,
   Stack,
 } from '@mui/material';
-import Header from './components/Header';
-import SearchBox from './components/SearchBox';
-import XPTable from './components/XPTable';
-import ActivityTable from './components/ActivityTable';
-import BossTable from './components/BossTable';
-import SkillsChart from './components/SkillsChart';
-import { getHiScoreByMode } from './api/api';
-import { ACTIVITY_END_INDEX } from './helpers/constants';
-import ShownItemsToggle from './components/ShownItemsToggle';
+import Header from './components/Header.jsx';
+import SearchBox from './components/SearchBox.jsx';
+import XPTable from './components/XPTable.jsx';
+import ActivityTable from './components/ActivityTable.jsx';
+import BossTable from './components/BossTable.jsx';
+import SkillsChart from './components/SkillsChart.jsx';
+import ShownItemsToggle from './components/ShownItemsToggle.jsx';
+import { getHiScoreByMode } from './api/api.js';
+import { ACTIVITY_END_INDEX } from './helpers/constants.js';
 
 const App = () => {
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
