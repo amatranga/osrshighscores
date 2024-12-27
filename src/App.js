@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { ThemeContext } from './contexts/ThemeContext';
 import {
   Alert,
   Container,
@@ -13,6 +12,7 @@ import ActivityTable from './components/ActivityTable.jsx';
 import BossTable from './components/BossTable.jsx';
 import SkillsChart from './components/SkillsChart.jsx';
 import ShownItemsToggle from './components/ShownItemsToggle.jsx';
+import { ThemeContext } from './contexts/ThemeContext.jsx';
 import { getHiScoreByMode } from './api/api.js';
 import { ACTIVITY_END_INDEX } from './helpers/constants.js';
 
