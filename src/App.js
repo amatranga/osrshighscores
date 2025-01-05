@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  Alert,
   Container,
   Grid2 as Grid,
-  Stack,
 } from '@mui/material';
 import Header from './components/Header.jsx';
 import SearchBox from './components/SearchBox.jsx';
@@ -11,7 +9,9 @@ import XPTable from './components/XPTable.jsx';
 import ActivityTable from './components/ActivityTable.jsx';
 import BossTable from './components/BossTable.jsx';
 import SkillsChart from './components/SkillsChart.jsx';
+import ErrorMessages from './components/ErrorMessages.jsx';
 import ShownItemsToggle from './components/ShownItemsToggle.jsx';
+import Favorites from './components/Favorites.jsx';
 import { ThemeContext } from './contexts/ThemeContext.jsx';
 import { getHiScoreByMode } from './api/api.js';
 import { ACTIVITY_END_INDEX } from './helpers/constants.js';
@@ -23,12 +23,21 @@ const App = () => {
   const [visualizationData, setVisualizationData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
   const [errors, setErrors] = useState([]);
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem('osrs_highscores_favorites');
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
   const [shownTables, setShownTables] = useState({
     skillsTable: true,
     skillsChart: true,
     activitiesTable: true,
     bossesTable: true,
   });
+  const [players, setPlayers] = useState([]);
+
+  useEffect(() => {
+    localStorage.setItem('osrs_highscores_favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
   useEffect(() => {
     if (playersData.length > 0) {
@@ -142,7 +151,13 @@ const App = () => {
         throw new Error('All player data requests failed. No valid results.');
       }
 
-      setPlayersData(validResults);
+      setPlayersData(prevData => {
+        const existingUsers = prevData.map(player => player.username);
+        const newPlayers = validResults.filter(
+          player => !existingUsers.includes(player.username)
+        );
+        return [...prevData, ...newPlayers];
+      })
     } catch (error) {
       const errorObj = {
         id: errors.length,
@@ -153,38 +168,113 @@ const App = () => {
     }
   };
 
+  const addPlayerToSearchBox = (player) => {
+    const { user, mode } = player;
+
+    setPlayers(prevPlayers => {
+      const existing = prevPlayers.some(
+        existingPlayer => 
+          existingPlayer.user === user && existingPlayer.mode === mode
+      );
+
+      if (!existing) {
+        return [...prevPlayers, { user, mode }];
+      }
+      return prevPlayers;
+    });
+  }
+
+  const addFavorite = (player) => {
+    if (!favorites.some((fav) => fav.username === player.username)) {
+      setFavorites([...favorites, player]);
+    }
+  };
+
+  const removeFavorite = (username) => {
+    setFavorites(favorites.filter((fav) => fav.username !== username));
+  };
+
+  const isFavorite = (username) => {
+    return favorites.some((fav) => fav.username === username);
+  };
+
   const toggleTableVisibility = (key) => {
     setShownTables((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const removePlayer = (player) => {
+    const { user, mode } = player;
+    const selectedPlayers = playersData.filter(element => element.username === user && element.mode === mode);
+
+    if (selectedPlayers && selectedPlayers.length > 0) {
+      setPlayersData(prevPlayers => 
+        prevPlayers.filter(curPlayer => curPlayer.username !== user || curPlayer.mode !== mode)
+      );
+      setVisualizationData(prevData => {
+        const updatedDatasets = prevData.datasets.filter(
+          dataset => dataset.label !== user && dataset.mode !== mode
+        );
+        
+        return { ... prevData, datasets: updatedDatasets };
+      });
+    }
+  }
 
   return (
     <>
       <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
       <Container sx={{ mt: 4 }} disableGutters>
-        {errors.length > 0 && (
-          <Stack sx={{ width: '100%' }} spacing={2}>
-            {errors.map((error) => (
-              <Alert
-                key={error.id}
-                severity="error"
-                onClose={() => setErrors((prev) => prev.filter((e) => e.id !== error.id))}
-              >
-                {error.message}
-              </Alert>
-            ))}
-          </Stack>
-        )}
-        <SearchBox findUsers={findUsers} />
 
-        <ShownItemsToggle shownTables={shownTables} toggleTableVisibility={toggleTableVisibility} />
+        {errors.length > 0 && <ErrorMessages errors={errors} />}
+        
+        <SearchBox
+          findUsers={findUsers}
+          removePlayer={removePlayer}
+          players={players}
+          setPlayers={setPlayers}
+        />
+
+        <Favorites
+          favorites={favorites}
+          addFavorite={addFavorite}
+          isFavorite={isFavorite}
+          removeFavorite={removeFavorite}
+          findUsers={findUsers}
+          addPlayerToSearchBox={addPlayerToSearchBox}
+        />
+
+        <ShownItemsToggle
+          shownTables={shownTables}
+          toggleTableVisibility={toggleTableVisibility}
+        />
 
         <Grid container spacing={1}>
-          {playersData.length > 0 && shownTables.skillsTable && <XPTable players={playersData} />}
-          {playersData.length > 0 && shownTables.activitiesTable && <ActivityTable players={playersData} />}
-          {playersData.length > 0 && shownTables.bossesTable && <BossTable players={playersData} />}
-          {
-            visualizationData.datasets && 
-            playersData.length > 0 && 
+          {playersData.length > 0 && shownTables.skillsTable && (
+            <XPTable
+              players={playersData}
+              addFavorite={addFavorite}
+              removeFavorite={removeFavorite}
+              isFavorite={isFavorite}
+            />
+          )}
+          {playersData.length > 0 && shownTables.activitiesTable && (
+            <ActivityTable
+              players={playersData}
+              addFavorite={addFavorite}
+              removeFavorite={removeFavorite}
+              isFavorite={isFavorite}
+            />
+          )}
+          {playersData.length > 0 && shownTables.bossesTable && (
+            <BossTable
+              players={playersData}
+              addFavorite={addFavorite}
+              removeFavorite={removeFavorite}
+              isFavorite={isFavorite}
+            />
+          )}
+          {visualizationData.datasets &&
+            playersData.length > 0 &&
             shownTables.skillsChart && (
               <SkillsChart data={visualizationData} options={chartOptions} />
           )}

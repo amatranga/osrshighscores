@@ -12,33 +12,40 @@ import {
 } from '@mui/material';
 import { modeMap } from '../helpers/constants';
 
-const SearchBox = ({ findUsers, removePlayer }) => {
+const SearchBox = ({ findUsers, removePlayer, players, setPlayers }) => {
   const [user, setUser] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
-  const [players, setPlayers] = useState([]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setUser(e.target.value);
   }
 
-  const handleDropdownChange = e => {
+  const handleDropdownChange = (e) => {
     const { value } = e.target;
     const selectedMode = modeMap[value];
     setSelectedMode(selectedMode.value);
   }
 
   const handleAddPlayer = () => {
-    const mode = selectedMode || 'main'
+    const mode = selectedMode || 'main';
     if (user) {
-      setPlayers([...players, { user, mode }]);
+      setPlayers(prevPlayers => {
+        // Only set players if the player/mode combo does NOT already exist
+        const newPlayers = prevPlayers.filter(player => player.user === user && player.mode === mode);
+        if (newPlayers.length) {
+          return prevPlayers;
+        }
+        return [...prevPlayers, { user, mode }];
+      });
+      
       setUser(''); // Clear input field
       setSelectedMode(''); // Reset mode dropdown
     }
   };
 
-  const handleRemovePlayer = (index) => {
+  const handleRemovePlayer = (player, index) => {
     setPlayers(players.filter((_, i) => i !== index));
-    removePlayer(index);
+    removePlayer(player);
   };
 
   const handleSearch = () => {
@@ -54,7 +61,7 @@ const SearchBox = ({ findUsers, removePlayer }) => {
   return (
     <>
       {/* Large Screen View */}
-      <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex'}, gap: 2 }}>
+      <Box sx={{ mb: 2, display: { xs: 'none', md: 'flex'}, gap: 2 }}>
         <TextField
           value={user}
           label="Enter Username"
@@ -89,7 +96,7 @@ const SearchBox = ({ findUsers, removePlayer }) => {
 
       {/* Small Screen View */}
       <>
-        <Box sx={{ mb: 4, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
+        <Box sx={{ mb: 2, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
           <TextField
             label="Enter Username"
             variant="outlined"
@@ -134,7 +141,7 @@ const SearchBox = ({ findUsers, removePlayer }) => {
                   <Chip
                     key={index}
                     label={`${player.user} (${modeMap[player.mode]?.name})`}
-                    onDelete={() => handleRemovePlayer(index)}
+                    onDelete={() => handleRemovePlayer(player, index)}
                     color="primary"
                   />
                 ))}
