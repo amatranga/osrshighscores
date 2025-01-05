@@ -1,14 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Container,
-  Grid2 as Grid,
-} from '@mui/material';
+import { Container } from '@mui/material';
 import Header from './components/Header.jsx';
 import SearchBox from './components/SearchBox.jsx';
-import XPTable from './components/XPTable.jsx';
-import ActivityTable from './components/ActivityTable.jsx';
-import BossTable from './components/BossTable.jsx';
-import SkillsChart from './components/SkillsChart.jsx';
+import DataTables from './components/DataTables.jsx';
 import ErrorMessages from './components/ErrorMessages.jsx';
 import ShownItemsToggle from './components/ShownItemsToggle.jsx';
 import Favorites from './components/Favorites.jsx';
@@ -248,37 +242,19 @@ const App = () => {
           toggleTableVisibility={toggleTableVisibility}
         />
 
-        <Grid container spacing={1}>
-          {playersData.length > 0 && shownTables.skillsTable && (
-            <XPTable
-              players={playersData}
-              addFavorite={addFavorite}
-              removeFavorite={removeFavorite}
-              isFavorite={isFavorite}
-            />
-          )}
-          {playersData.length > 0 && shownTables.activitiesTable && (
-            <ActivityTable
-              players={playersData}
-              addFavorite={addFavorite}
-              removeFavorite={removeFavorite}
-              isFavorite={isFavorite}
-            />
-          )}
-          {playersData.length > 0 && shownTables.bossesTable && (
-            <BossTable
-              players={playersData}
-              addFavorite={addFavorite}
-              removeFavorite={removeFavorite}
-              isFavorite={isFavorite}
-            />
-          )}
-          {visualizationData.datasets &&
-            playersData.length > 0 &&
-            shownTables.skillsChart && (
-              <SkillsChart data={visualizationData} options={chartOptions} />
-          )}
-        </Grid>
+        {
+          playersData.length > 0 &&
+          <DataTables
+            players={playersData}
+            shownTables={shownTables}
+            addFavorite={addFavorite}
+            isFavorite={isFavorite}
+            removeFavorite={removeFavorite}
+            visualizationData={visualizationData}
+            options={chartOptions}
+          />
+        }
+
       </Container>
     </>
   );
