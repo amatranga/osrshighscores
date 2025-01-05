@@ -209,7 +209,7 @@ const App = () => {
           dataset => dataset.label !== user && dataset.mode !== mode
         );
         
-        return { ... prevData, datasets: updatedDatasets };
+        return { ...prevData, datasets: updatedDatasets };
       });
     }
   }
