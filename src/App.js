@@ -6,6 +6,7 @@ import DataTables from './components/DataTables.jsx';
 import ErrorMessages from './components/ErrorMessages.jsx';
 import ShownItemsToggle from './components/ShownItemsToggle.jsx';
 import Favorites from './components/Favorites.jsx';
+import LoadingSpinner from './components/LoadingSpinner.jsx';
 import { ThemeContext } from './contexts/ThemeContext.jsx';
 import { getHiScoreByMode } from './api/api.js';
 import { ACTIVITY_END_INDEX } from './helpers/constants.js';
@@ -28,6 +29,7 @@ const App = () => {
     bossesTable: true,
   });
   const [players, setPlayers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('osrs_highscores_favorites', JSON.stringify(favorites));
@@ -102,6 +104,7 @@ const App = () => {
 
   const findUsers = async (players) => {
     try {
+      setLoading(true);
       const dataPromises = players.map(async (player) => {
         try {
           const result = await getHiScoreByMode(player.mode, player.user);
@@ -159,6 +162,8 @@ const App = () => {
       };
       const errorMessages = [...errors, errorObj];
       setErrors(errorMessages);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -241,6 +246,8 @@ const App = () => {
           shownTables={shownTables}
           toggleTableVisibility={toggleTableVisibility}
         />
+
+        {loading && <LoadingSpinner />}
 
         {
           playersData.length > 0 &&
