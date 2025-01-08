@@ -1,7 +1,7 @@
 import { getHiScoreByMode } from "../api/api.js";
 import { ACTIVITY_END_INDEX } from "../helpers/constants.js";
 
-export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData) => {
+export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData, setSearchDisabled) => {
   const findUsers = async (players) => {
     // Retrieve previously searched users from session storage
     // Handles users who were searched for, then removed, then searched for again
@@ -11,7 +11,20 @@ export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData)
     ));
 
     if (sessionPlayers && sessionPlayers.length > 0) {
-      setPlayersData((prevData) => ([...prevData, ...sessionPlayers]));
+      // Filter out invalid session players before setting data
+      const validSessionPlayers = sessionPlayers.filter(player => (Object.hasOwn(player, 'data')));
+      if (validSessionPlayers && validSessionPlayers.length > 0) {
+        const newPlayers = players.filter(player => 
+          playersData.some((p) => (
+            p.username === player.user && p.mode === player.mode
+          ))
+        );
+        // Prevent same player from being added to page multiple times from 'Favorites' section
+        if (newPlayers && newPlayers.length < 1) {
+          setPlayersData((prevData) => ([...prevData, ...sessionPlayers]));
+        }
+      }
+      setSearchDisabled(false);
       return;
     }
 
@@ -82,8 +95,10 @@ export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData)
         ]);
       } finally {
         setLoading(false);
+        setSearchDisabled(false);
       }
     }
+
   };
 
   return { findUsers };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Chip,
@@ -12,9 +12,29 @@ import {
 } from '@mui/material';
 import { modeMap } from '../helpers/constants';
 
-const SearchBox = ({ findUsers, removePlayer, players, setPlayers }) => {
+const SearchBox = ({ findUsers, removePlayer, players, setPlayers, searchDisabled, setSearchDisabled }) => {
   const [user, setUser] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
+
+  useEffect(() => {
+    if (players && players.length > 0) {
+      const trimmedUsers = players.map(player => (
+        {
+          user: player.user.trim(),
+          mode: player.mode
+        }
+      ));
+      findUsers(trimmedUsers);
+    }
+  }, [players, findUsers]);
+
+  useEffect(() => {
+    if (user && user.length > 0) {
+      setSearchDisabled(false);
+    } else{
+      setSearchDisabled(true);
+    }
+  }, [user, setSearchDisabled]);
 
   const handleChange = (e) => {
     setUser(e.target.value);
@@ -45,18 +65,9 @@ const SearchBox = ({ findUsers, removePlayer, players, setPlayers }) => {
 
   const handleRemovePlayer = (player, index) => {
     setPlayers(players.filter((_, i) => i !== index));
+    setSearchDisabled(false);
     removePlayer(player);
   };
-
-  const handleSearch = () => {
-    const trimmedUsers = players.map(player => (
-      {
-        user: player.user.trim(),
-        mode: player.mode
-      }
-    ));
-    findUsers(trimmedUsers);
-  }
 
   return (
     <>
@@ -89,8 +100,8 @@ const SearchBox = ({ findUsers, removePlayer, players, setPlayers }) => {
           variant="contained"
           color="primary"
           onClick={handleAddPlayer}
-          disabled={user === '' || user.trim() === ''}>
-            Add Player
+          disabled={user === '' || user.trim() === '' || searchDisabled}>
+            Find Player
         </Button>
       </Box>
 
@@ -124,8 +135,8 @@ const SearchBox = ({ findUsers, removePlayer, players, setPlayers }) => {
             variant="contained"
             color="primary"
             onClick={handleAddPlayer}
-            disabled={user === '' || user.trim() === ''}>
-            Add Player
+            disabled={user === '' || user.trim() === '' || searchDisabled}>
+            Find Player
           </Button>
         </Box>
       </>
@@ -148,17 +159,6 @@ const SearchBox = ({ findUsers, removePlayer, players, setPlayers }) => {
               </Box>
             </Box>
           </Box>
-
-          {/* Search button */}
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleSearch}
-            disabled={players.length === 0}
-            sx={{ mb: 4 }}
-          >
-            Compare
-          </Button>
         </>
       )}
     </>

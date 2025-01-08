@@ -29,6 +29,8 @@ const App = () => {
     removePlayer,
     addPlayerToSearchBox,
     toggleTableVisibility,
+    setSearchDisabled,
+    searchDisabled,
   } = useAppState();
 
   const {
@@ -38,7 +40,13 @@ const App = () => {
     isFavorite,
   } = useFavorites(setPlayers);
 
-  const { findUsers } = useFindUsers(setErrors, setPlayersData, setLoading, playersData);
+  const { findUsers } = useFindUsers(
+    setErrors,
+    setPlayersData,
+    setLoading,
+    playersData,
+    setSearchDisabled
+  );
 
   return (
     <>
@@ -52,6 +60,8 @@ const App = () => {
           removePlayer={removePlayer}
           players={players}
           setPlayers={setPlayers}
+          setSearchDisabled={setSearchDisabled}
+          searchDisabled={searchDisabled}
         />
 
         <Favorites

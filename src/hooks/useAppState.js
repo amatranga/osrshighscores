@@ -16,6 +16,7 @@ const useAppState = () => {
   });
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchDisabled, setSearchDisabled] = useState(false);
 
   const removePlayer = (player) => {
     const { user, mode } = player;
@@ -142,6 +143,8 @@ const useAppState = () => {
     removePlayer,
     addPlayerToSearchBox,
     toggleTableVisibility,
+    searchDisabled,
+    setSearchDisabled,
   };
 };
 
