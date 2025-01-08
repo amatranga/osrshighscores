@@ -1,11 +1,11 @@
 import React from 'react';
 import { Stack, Alert } from '@mui/material';
 
-const ErrorMessages = ({ errors }) => (
+const ErrorMessages = ({ errors, setErrors }) => (
   <Stack sx={{ width: '100%' }} spacing={2}>
-    {errors.map((error) => (
+    {errors.map((error, idx) => (
       <Alert
-        key={error.id}
+        key={idx}
         severity="error"
         onClose={() => setErrors((prev) => prev.filter((e) => e.id !== error.id))}
       >

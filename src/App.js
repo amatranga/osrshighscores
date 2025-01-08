@@ -45,7 +45,7 @@ const App = () => {
       <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
       <Container sx={{ mt: 4 }} disableGutters>
 
-        {errors.length > 0 && <ErrorMessages errors={errors} />}
+        {errors.length > 0 && <ErrorMessages errors={errors} setErrors={setErrors} />}
         
         <SearchBox
           findUsers={findUsers}
