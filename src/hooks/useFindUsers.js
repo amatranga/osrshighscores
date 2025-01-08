@@ -3,19 +3,27 @@ import { ACTIVITY_END_INDEX } from "../helpers/constants.js";
 
 export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData) => {
   const findUsers = async (players) => {
-    // Retrieve previously searched users from session storage and users who we already have data for
+    // Retrieve previously searched users from session storage
+    // Handles users who were searched for, then removed, then searched for again
     const sessionData = JSON.parse(sessionStorage.getItem('osrs_highscores_searched_users') || "[]");
-    const newPlayersArr = players.filter(player => {
-      const sessionExists = sessionData.some(p => (
-        p.username === player.user && p.mode === player.mode
-      ));
-      const playerDataExists = playersData.some(p => (
-        p.username === player.user && p.mode === player.mode
-      ));
+    const sessionPlayers = sessionData.filter(player => (
+      players.every((p) => p.user === player.username && p.mode === player.mode)
+    ));
 
-      return !sessionExists && !playerDataExists;
-    });
+    if (sessionPlayers && sessionPlayers.length > 0) {
+      setPlayersData((prevData) => ([...prevData, ...sessionPlayers]));
+      return;
+    }
 
+    // Retrieve users who we already have data for
+    // Handles users who already have data displayed in the application
+    const newPlayersArr = players.filter(player => (
+      !playersData.some(p => (
+        p.username === player.user && p.mode === player.mode
+      ))
+    ));
+
+    // Search for players who don't have data in either session OR application
     if (newPlayersArr && newPlayersArr.length > 0) {
       try {
         setLoading(true);
@@ -64,10 +72,7 @@ export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData)
             return [...prevData, ...newPlayers];
           });
           // Add newly searched players to session storage
-          const updatedSessionData = [...sessionData, ...validResults.map((p) => ({
-            username: p.username,
-            mode: p.mode,
-          }))];
+          const updatedSessionData = [...sessionData, ...validResults];
           sessionStorage.setItem('osrs_highscores_searched_users', JSON.stringify(updatedSessionData));
         }
       } catch (error) {
