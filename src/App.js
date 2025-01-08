@@ -38,7 +38,7 @@ const App = () => {
     isFavorite,
   } = useFavorites(setPlayers);
 
-  const { findUsers } = useFindUsers(setErrors, setPlayersData, setLoading);
+  const { findUsers } = useFindUsers(setErrors, setPlayersData, setLoading, playersData);
 
   return (
     <>
