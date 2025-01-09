@@ -1,7 +1,14 @@
 import { getHiScoreByMode } from "../api/api.js";
 import { ACTIVITY_END_INDEX } from "../helpers/constants.js";
 
-export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData, setSearchDisabled) => {
+const useFindUsers = (
+  setErrors,
+  setPlayersData,
+  setLoading,
+  playersData,
+  setSearchDisabled,
+  setFailedPlayers,
+) => {
   const findUsers = async (players) => {
     // Retrieve previously searched users from session storage
     // Handles users who were searched for, then removed, then searched for again
@@ -29,17 +36,19 @@ export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData,
     }
 
     // Retrieve users who we already have data for
-    // Handles users who already have data displayed in the application
-    const newPlayersArr = players.filter(player => (
-      !playersData.some(p => (
-        p.username === player.user && p.mode === player.mode
-      ))
-    ));
+    // Handles users who already have data displayed in the application OR who we have already requested data for
+    const newPlayersArr = players.filter((player) => {
+      const playerExists = playersData.some(
+        (p) => p.username === player.user && p.mode === player.mode
+      );
+      return !playerExists;
+    });
 
     // Search for players who don't have data in either session OR application
-    if (newPlayersArr && newPlayersArr.length > 0) {
+    if (newPlayersArr.length > 0) {
       try {
         setLoading(true);
+
         const dataPromises = newPlayersArr.map(async (player) => {
           try {
             const result = await getHiScoreByMode(player.mode, player.user);
@@ -66,6 +75,7 @@ export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData,
               data: result.data,
             };
           } catch (error) {
+            setFailedPlayers((prev) => [...prev, player]); // Add to failed players
             setErrors((prevErrors) => [
               ...prevErrors,
               { message: `Error fetching data for player "${player.user} (${player.mode})": ${error.message}` },
@@ -103,3 +113,5 @@ export const useFindUsers = (setErrors, setPlayersData, setLoading, playersData,
 
   return { findUsers };
 };
+
+export { useFindUsers };

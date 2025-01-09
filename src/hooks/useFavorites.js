@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useFavorites = (setPlayers) => {
+const useFavorites = () => {
   const [favorites, setFavorites] = useState(() => {
     const savedFavorites = localStorage.getItem("osrs_highscores_favorites");
     return savedFavorites ? JSON.parse(savedFavorites) : [];

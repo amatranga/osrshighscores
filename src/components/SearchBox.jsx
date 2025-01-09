@@ -12,21 +12,16 @@ import {
 } from '@mui/material';
 import { modeMap } from '../helpers/constants';
 
-const SearchBox = ({ findUsers, removePlayer, players, setPlayers, searchDisabled, setSearchDisabled }) => {
+const SearchBox = ({
+  removePlayer,
+  players,
+  setPlayers,
+  searchDisabled,
+  setSearchDisabled,
+  failedPlayers,
+}) => {
   const [user, setUser] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
-
-  useEffect(() => {
-    if (players && players.length > 0) {
-      const trimmedUsers = players.map(player => (
-        {
-          user: player.user.trim(),
-          mode: player.mode
-        }
-      ));
-      findUsers(trimmedUsers);
-    }
-  }, [players, findUsers]);
 
   useEffect(() => {
     if (user && user.length > 0) {
@@ -48,16 +43,24 @@ const SearchBox = ({ findUsers, removePlayer, players, setPlayers, searchDisable
 
   const handleAddPlayer = () => {
     const mode = selectedMode || 'main';
-    if (user) {
-      setPlayers(prevPlayers => {
-        // Only set players if the player/mode combo does NOT already exist
-        const newPlayers = prevPlayers.filter(player => player.user === user && player.mode === mode);
-        if (newPlayers.length) {
-          return prevPlayers;
+    const trimmedUser = user.trim();
+
+    if (trimmedUser) {
+      setPlayers((prevPlayers) => {
+        const isDuplicate = prevPlayers.some(
+          (player) => player.user === trimmedUser && player.mode === mode
+        );
+        const isFailed = failedPlayers.some(
+          (failed) => failed.user === trimmedUser && failed.mode === mode
+        );
+
+        if (isDuplicate || isFailed) {
+          return prevPlayers; // Skip duplicates or failed players
         }
-        return [...prevPlayers, { user, mode }];
+
+        return [...prevPlayers, { user: trimmedUser, mode }];
       });
-      
+
       setUser(''); // Clear input field
       setSelectedMode(''); // Reset mode dropdown
     }

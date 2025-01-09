@@ -1,10 +1,13 @@
 import { useState, useEffect, useContext } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ThemeContext } from "../contexts/ThemeContext.jsx";
 
 const useAppState = () => {
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [playersData, setPlayersData] = useState([]);
+  const [failedPlayers, setFailedPlayers] = useState([]);
   const [visualizationData, setVisualizationData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
   const [errors, setErrors] = useState([]);
@@ -128,6 +131,8 @@ const useAppState = () => {
     toggleDarkMode,
     playersData,
     setPlayersData,
+    failedPlayers,
+    setFailedPlayers,
     visualizationData,
     setVisualizationData,
     chartOptions,
@@ -145,6 +150,8 @@ const useAppState = () => {
     toggleTableVisibility,
     searchDisabled,
     setSearchDisabled,
+    searchParams,
+    setSearchParams,
   };
 };
 
