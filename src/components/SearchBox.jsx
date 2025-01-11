@@ -19,6 +19,7 @@ const SearchBox = ({
   searchDisabled,
   setSearchDisabled,
   failedPlayers,
+  setFailedPlayers,
 }) => {
   const [user, setUser] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
@@ -68,6 +69,11 @@ const SearchBox = ({
 
   const handleRemovePlayer = (player, index) => {
     setPlayers(players.filter((_, i) => i !== index));
+    setFailedPlayers((prevFailed) => (
+      prevFailed.filter((failed) => (
+        failed.user !== player.user || failed.mode !== player.mode
+      ))
+    ));
     setSearchDisabled(false);
     removePlayer(player);
   };
@@ -112,6 +118,7 @@ const SearchBox = ({
       <>
         <Box sx={{ mb: 2, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
           <TextField
+            value={user}
             label="Enter Username"
             variant="outlined"
             fullWidth

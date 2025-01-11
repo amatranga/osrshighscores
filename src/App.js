@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Container } from '@mui/material';
 import Header from './components/Header.jsx';
 import SearchBox from './components/SearchBox.jsx';
@@ -7,11 +7,17 @@ import ErrorMessages from './components/ErrorMessages.jsx';
 import ShownItemsToggle from './components/ShownItemsToggle.jsx';
 import Favorites from './components/Favorites.jsx';
 import LoadingSpinner from './components/LoadingSpinner.jsx';
+import ExportButtons from './components/ExportButtons.jsx';
 import { useAppState } from './hooks/useAppState.js';
 import { useFavorites } from './hooks/useFavorites.js';
 import { useFindUsers } from './hooks/useFindUsers.js';
 import { useMountEffect } from './hooks/useMountEffect.js';
-import { encodePlayers, decodePlayers } from './helpers/functions.js';
+import {
+  encodePlayers,
+  decodePlayers,
+  exportToCSV,
+  exportToJSON,
+} from './helpers/functions.js';
 
 const App = () => {
   const {
@@ -55,22 +61,13 @@ const App = () => {
     setFailedPlayers,
   );
 
-  const memoizedFindUsers = useCallback(findUsers, [
-    setErrors,
-    setPlayersData,
-    setLoading,
-    playersData,
-    setSearchDisabled,
-    setFailedPlayers,
-  ]);
-
   // Populate state from URL on initial load
   useMountEffect(() => {
     const param = searchParams.get('players');
     if (param) {
       const playersFromUrl = decodePlayers(param);
       setPlayers(playersFromUrl);
-      memoizedFindUsers(playersFromUrl);
+      findUsers(playersFromUrl);
     }
   });
 
@@ -95,6 +92,7 @@ const App = () => {
         setSearchParams({}); // Clear URL if no players
       }
     }
+    // eslint-disable-next-line
   }, [players, searchParams, setSearchParams]);
 
   useEffect(() => {
@@ -110,9 +108,11 @@ const App = () => {
             mode: player.mode
           }
         ));
-      memoizedFindUsers(trimmedUsers);
+      if (trimmedUsers.length > 0) {
+        findUsers(trimmedUsers);
+      }
     }
-  }, [players, memoizedFindUsers, failedPlayers]);
+  }, [players, findUsers, failedPlayers]);
 
   return (
     <>
@@ -129,6 +129,7 @@ const App = () => {
           setSearchDisabled={setSearchDisabled}
           searchDisabled={searchDisabled}
           failedPlayers={failedPlayers}
+          setFailedPlayers={setFailedPlayers}
         />
 
         <Favorites
@@ -149,15 +150,21 @@ const App = () => {
 
         {
           playersData.length > 0 &&
-          <DataTables
-            players={playersData}
-            shownTables={shownTables}
-            addFavorite={addFavorite}
-            isFavorite={isFavorite}
-            removeFavorite={removeFavorite}
-            visualizationData={visualizationData}
-            options={chartOptions}
-          />
+          <>
+            <DataTables
+              players={playersData}
+              shownTables={shownTables}
+              addFavorite={addFavorite}
+              isFavorite={isFavorite}
+              removeFavorite={removeFavorite}
+              visualizationData={visualizationData}
+              options={chartOptions}
+            />
+            <ExportButtons
+              exportToCsv={() => exportToCSV(playersData)}
+              exportToJson={() => exportToJSON(playersData)}
+            />
+          </>
         }
 
       </Container>
