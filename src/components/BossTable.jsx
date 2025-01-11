@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Button,
   Card,
   CardContent,
   FormControl,
@@ -17,6 +18,10 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import {
+  Star,
+  StarBorder,
+} from '@mui/icons-material';
 import { ACTIVITY_END_INDEX } from '../helpers/constants';
 
 const tableCells = [
@@ -24,7 +29,7 @@ const tableCells = [
   { name: 'Rank', id: 'rank' },
 ];
 
-const BossTable = ({ players }) => {
+const BossTable = ({ players, addFavorite, removeFavorite, isFavorite }) => {
   const [selectedDataPoint, setSelectedDataPoint] = useState('KC');
 
   // Extract boss names from the first player
@@ -46,7 +51,7 @@ const BossTable = ({ players }) => {
     return { maxScore, minRank };
   };
 
-  const handleRadioSelect = e => {
+  const handleRadioSelect = (e) => {
     setSelectedDataPoint(e.target.value);
   };
 
@@ -83,7 +88,20 @@ const BossTable = ({ players }) => {
                     players.map(player => (
                       label.name === selectedDataPoint &&
                       <TableCell key={`${player.id}-${label.id}`} sx={{ whiteSpace: 'nowrap' }}>
-                        {player.username} ({label.name})
+                        {/* {player.username} ({label.name}) */}
+                        <Button
+                          variant={isFavorite(player.username) ? 'contained': 'outlined'}
+                          color='primary'
+                          onClick={() => 
+                            isFavorite(player.username)
+                              ? removeFavorite(player.username)
+                              : addFavorite(player)
+                          }
+                        >
+                          <>{player.username}{' '}({label.name}){' '}</>
+                          {isFavorite(player.username) && <Star />}
+                          {!isFavorite(player.username) && <StarBorder />}
+                        </Button>
                       </TableCell>
                     ))
                   )}

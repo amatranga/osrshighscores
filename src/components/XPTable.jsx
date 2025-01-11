@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Button,
   Card,
   CardContent,
   FormControl,
@@ -17,6 +18,10 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import {
+  Star,
+  StarBorder
+} from '@mui/icons-material';
 
 const tableCells = [
   { name:'Level', id: 'level' },
@@ -24,7 +29,7 @@ const tableCells = [
   { name: 'Rank', id: 'rank' },
 ];
 
-const XPTable = ({ players }) => {
+const XPTable = ({ players, addFavorite, removeFavorite, isFavorite }) => {
   const [selectedDataPoint, setSelectedDataPoint] = useState('Level');
 
   // Extract skill names from the first player as headers
@@ -81,12 +86,24 @@ const XPTable = ({ players }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Skill</TableCell>
-                  {/* Player (Level) */}
+                  {/* Player (Level/XP/Rank) */}
                   {tableCells.map(label =>
                     players.map(player => (
                       label.name === selectedDataPoint && 
                       <TableCell key={`${player.id}-${label.id}`} sx={{ whiteSpace: 'nowrap' }}>
-                        {player.username} ({label.name})
+                        <Button
+                          variant={isFavorite(player.username) ? 'contained': 'outlined'}
+                          color='primary'
+                          onClick={() => 
+                            isFavorite(player.username)
+                              ? removeFavorite(player.username)
+                              : addFavorite(player)
+                          }
+                        >
+                          <>{player.username}{' '}({label.name}){' '}</>
+                          {isFavorite(player.username) && <Star />}
+                          {!isFavorite(player.username) && <StarBorder />}
+                        </Button>
                       </TableCell>
                     ))
                   )}

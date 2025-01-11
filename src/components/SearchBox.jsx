@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Chip,
@@ -12,49 +12,76 @@ import {
 } from '@mui/material';
 import { modeMap } from '../helpers/constants';
 
-const SearchBox = ({ findUsers, removePlayer }) => {
+const SearchBox = ({
+  removePlayer,
+  players,
+  setPlayers,
+  searchDisabled,
+  setSearchDisabled,
+  failedPlayers,
+  setFailedPlayers,
+}) => {
   const [user, setUser] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
-  const [players, setPlayers] = useState([]);
 
-  const handleChange = e => {
+  useEffect(() => {
+    if (user && user.length > 0) {
+      setSearchDisabled(false);
+    } else{
+      setSearchDisabled(true);
+    }
+  }, [user, setSearchDisabled]);
+
+  const handleChange = (e) => {
     setUser(e.target.value);
   }
 
-  const handleDropdownChange = e => {
+  const handleDropdownChange = (e) => {
     const { value } = e.target;
     const selectedMode = modeMap[value];
     setSelectedMode(selectedMode.value);
   }
 
   const handleAddPlayer = () => {
-    const mode = selectedMode || 'main'
-    if (user) {
-      setPlayers([...players, { user, mode }]);
+    const mode = selectedMode || 'main';
+    const trimmedUser = user.trim();
+
+    if (trimmedUser) {
+      setPlayers((prevPlayers) => {
+        const isDuplicate = prevPlayers.some(
+          (player) => player.user === trimmedUser && player.mode === mode
+        );
+        const isFailed = failedPlayers.some(
+          (failed) => failed.user === trimmedUser && failed.mode === mode
+        );
+
+        if (isDuplicate || isFailed) {
+          return prevPlayers; // Skip duplicates or failed players
+        }
+
+        return [...prevPlayers, { user: trimmedUser, mode }];
+      });
+
       setUser(''); // Clear input field
       setSelectedMode(''); // Reset mode dropdown
     }
   };
 
-  const handleRemovePlayer = (index) => {
+  const handleRemovePlayer = (player, index) => {
     setPlayers(players.filter((_, i) => i !== index));
-    removePlayer(index);
-  };
-
-  const handleSearch = () => {
-    const trimmedUsers = players.map(player => (
-      {
-        user: player.user.trim(),
-        mode: player.mode
-      }
+    setFailedPlayers((prevFailed) => (
+      prevFailed.filter((failed) => (
+        failed.user !== player.user || failed.mode !== player.mode
+      ))
     ));
-    findUsers(trimmedUsers);
-  }
+    setSearchDisabled(false);
+    removePlayer(player);
+  };
 
   return (
     <>
       {/* Large Screen View */}
-      <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex'}, gap: 2 }}>
+      <Box sx={{ mb: 2, display: { xs: 'none', md: 'flex'}, gap: 2 }}>
         <TextField
           value={user}
           label="Enter Username"
@@ -82,15 +109,16 @@ const SearchBox = ({ findUsers, removePlayer }) => {
           variant="contained"
           color="primary"
           onClick={handleAddPlayer}
-          disabled={user === '' || user.trim() === ''}>
-            Add Player
+          disabled={user === '' || user.trim() === '' || searchDisabled}>
+            Find Player
         </Button>
       </Box>
 
       {/* Small Screen View */}
       <>
-        <Box sx={{ mb: 4, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
+        <Box sx={{ mb: 2, display: { xs: 'flex', md: 'none'}, gap: 2 }}>
           <TextField
+            value={user}
             label="Enter Username"
             variant="outlined"
             fullWidth
@@ -117,8 +145,8 @@ const SearchBox = ({ findUsers, removePlayer }) => {
             variant="contained"
             color="primary"
             onClick={handleAddPlayer}
-            disabled={user === '' || user.trim() === ''}>
-            Add Player
+            disabled={user === '' || user.trim() === '' || searchDisabled}>
+            Find Player
           </Button>
         </Box>
       </>
@@ -134,24 +162,13 @@ const SearchBox = ({ findUsers, removePlayer }) => {
                   <Chip
                     key={index}
                     label={`${player.user} (${modeMap[player.mode]?.name})`}
-                    onDelete={() => handleRemovePlayer(index)}
+                    onDelete={() => handleRemovePlayer(player, index)}
                     color="primary"
                   />
                 ))}
               </Box>
             </Box>
           </Box>
-
-          {/* Search button */}
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleSearch}
-            disabled={players.length === 0}
-            sx={{ mb: 4 }}
-          >
-            Compare
-          </Button>
         </>
       )}
     </>
