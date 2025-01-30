@@ -9,7 +9,7 @@ const modeMap = {
   freshStart: { name: 'Fresh Start', value: 'freshStart' },
 };
 
-const ACTIVITY_END_INDEX = 18;
+const ACTIVITY_END_INDEX = 19;
 
 export {
   modeMap,

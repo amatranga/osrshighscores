@@ -8,7 +8,9 @@ import ShownItemsToggle from './components/ShownItemsToggle.jsx';
 import Favorites from './components/Favorites.jsx';
 import LoadingSpinner from './components/LoadingSpinner.jsx';
 import ExportButtons from './components/ExportButtons.jsx';
+import ActionButtons from './components/ActionButtons.jsx';
 import { useAppState } from './hooks/useAppState.js';
+import { useActionButtonState } from './hooks/useActionButtonState.js';
 import { useFavorites } from './hooks/useFavorites.js';
 import { useFindUsers } from './hooks/useFindUsers.js';
 import { useMountEffect } from './hooks/useMountEffect.js';
@@ -60,6 +62,13 @@ const App = () => {
     setSearchDisabled,
     setFailedPlayers,
   );
+
+  const {
+    showFavorites,
+    setShowFavorites,
+    showCharts,
+    setShowCharts,
+  } = useActionButtonState();
 
   // Populate state from URL on initial load
   useMountEffect(() => {
@@ -132,19 +141,30 @@ const App = () => {
           setFailedPlayers={setFailedPlayers}
         />
 
-        <Favorites
-          favorites={favorites}
-          addFavorite={addFavorite}
-          isFavorite={isFavorite}
-          removeFavorite={removeFavorite}
-          findUsers={findUsers}
-          addPlayerToSearchBox={addPlayerToSearchBox}
+        <ActionButtons
+          showFavorites={showFavorites}
+          setShowFavorites={setShowFavorites}
+          showCharts={showCharts}
+          setShowCharts={setShowCharts}
         />
 
-        <ShownItemsToggle
-          shownTables={shownTables}
-          toggleTableVisibility={toggleTableVisibility}
-        />
+        {showFavorites && (
+          <Favorites
+            favorites={favorites}
+            addFavorite={addFavorite}
+            isFavorite={isFavorite}
+            removeFavorite={removeFavorite}
+            findUsers={findUsers}
+            addPlayerToSearchBox={addPlayerToSearchBox}
+          />
+        )}
+
+        {showCharts && (
+          <ShownItemsToggle
+            shownTables={shownTables}
+            toggleTableVisibility={toggleTableVisibility}
+          />
+        )}
 
         {loading && <LoadingSpinner />}
 

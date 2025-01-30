@@ -22,7 +22,7 @@ const SearchBox = ({
   setFailedPlayers,
 }) => {
   const [user, setUser] = useState('');
-  const [selectedMode, setSelectedMode] = useState('');
+  const [selectedMode, setSelectedMode] = useState('main');
 
   useEffect(() => {
     if (user && user.length > 0) {
